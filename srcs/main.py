@@ -1,11 +1,17 @@
+from graphic import texture 
 import random
 import pygame
 import pdb
 
 tile_sprite = 64
+snake_xpos = 0
+snake_ypos = 0
 
 def generate_apple(grid, widht, height):
-    #breakpoint()
+    global snake_xpos
+    global snake_ypos
+    
+    #breakpoint() #Debug
     while(True):
         x_red = random.randint(1, height - 2)
         y_red = random.randint(1, widht - 2)
@@ -18,10 +24,18 @@ def generate_apple(grid, widht, height):
         if(grid[x_green][y_green] == "0"):
             grid[x_green][y_green] = "G"
             break
+    while(True):
+        x_snake = random.randint(1, height - 2)
+        y_snake = random.randint(1, widht - 2)
+        if(grid[x_snake][y_snake] == "0"):
+            grid[x_snake][y_snake] = "P"
+            snake_xpos = x_snake
+            snake_ypos = y_snake
+            break
     return(grid)
 
 def generate_map(widht, height):
-    #breakpoint()
+    #breakpoint() #Debug
     grid = []
     for i in range(height):
         row = []
@@ -33,25 +47,16 @@ def generate_map(widht, height):
         grid.append(row)
     return(generate_apple(grid, widht, height))
 
-def texture_init():
-    dico_texture = []
-    # -- Snake head -- #
-    snake_sprite = pygame.image.load("snake.png").convert()
-    snake_sprite = pygame.transform.scale((snake_sprite), (tile_sprite, tile_sprite))
-    dico_texture.append(snake_sprite)
-    # -- Wall -- # 
-    wall_sprite = pygame.image.load("wall.png").convert()
-    wall_sprite = pygame.transform.scale(wall_sprite, (tile_sprite, tile_sprite))
-    dico_texture.append(wall_sprite)
-    return (dico_texture)
+
 
 def display_map(grid):
+    global snake_xpos
     width = len(grid[0]) * tile_sprite
     height = len(grid) * tile_sprite
 
     pygame.init()
     screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-    dico_texture = texture_init()
+    dico_texture = texture.texture_init()
     run = True
     while run:
         for event in pygame.event.get():
@@ -59,14 +64,22 @@ def display_map(grid):
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    # Mooving snake
-                    print("moove")
+                    grid[snake_xpos][snake_ypos] = '0'
+                    grid[snake_xpos  - 1][snake_ypos] = 'P'
+                    snake_xpos = snake_xpos - 1
+                    
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
                 if char == "1":
                     screen.blit(dico_texture[1], (j * tile_sprite, i * tile_sprite))
-                elif char == "G":
+                elif char == "P":
                     screen.blit(dico_texture[0], (j * tile_sprite, i * tile_sprite))
+                elif char == "0":
+                    screen.blit(dico_texture[2], (j * tile_sprite, i * tile_sprite))
+                elif char == "G":
+                    screen.blit(dico_texture[3], (j * tile_sprite, i * tile_sprite))
+                elif char == "R":
+                    screen.blit(dico_texture[4], (j * tile_sprite, i * tile_sprite))
         pygame.display.flip()
     pygame.quit()
 
