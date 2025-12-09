@@ -7,7 +7,7 @@ tile_sprite = 64
 snake_xpos = 0
 snake_ypos = 0
 
-def generate_apple(grid, widht, height):
+def generate_elements(grid, widht, height):
     global snake_xpos
     global snake_ypos
     
@@ -45,12 +45,20 @@ def generate_map(widht, height):
             else:
                 row.append("0")
         grid.append(row)
-    return(generate_apple(grid, widht, height))
+    return(generate_elements(grid, widht, height))
 
-
+def change_direction(x, y, grid, widht, height):
+    global snake_ypos
+    global snake_xpos
+    if(snake_xpos + x > widht - 2 or snake_xpos + x < 1 or snake_ypos + y > height - 2 or snake_ypos + y < 1):
+        return(grid)
+    grid[snake_xpos][snake_ypos] = '0'
+    grid[snake_xpos + x][snake_ypos + y] = 'P'
+    snake_xpos = snake_xpos + x
+    snake_ypos = snake_ypos + y
+    return(grid)
 
 def display_map(grid):
-    global snake_xpos
     width = len(grid[0]) * tile_sprite
     height = len(grid) * tile_sprite
 
@@ -64,9 +72,13 @@ def display_map(grid):
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    grid[snake_xpos][snake_ypos] = '0'
-                    grid[snake_xpos  - 1][snake_ypos] = 'P'
-                    snake_xpos = snake_xpos - 1
+                    grid = change_direction(-1, 0, grid, len(grid[0]), len(grid))
+                elif event.key == pygame.K_s:
+                    grid = change_direction(+1, 0, grid, len(grid[0]), len(grid))
+                elif event.key == pygame.K_d:
+                    grid = change_direction(0, +1, grid, len(grid[0]), len(grid))
+                elif event.key == pygame.K_a:
+                    grid = change_direction(0, -1, grid, len(grid[0]), len(grid))
                     
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
@@ -82,9 +94,6 @@ def display_map(grid):
                     screen.blit(dico_texture[4], (j * tile_sprite, i * tile_sprite))
         pygame.display.flip()
     pygame.quit()
-
-    #for line in grid:
-    #    print(line)
 
 def main():
     print("Main")
