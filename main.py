@@ -32,8 +32,27 @@ def generate_map(widht, height):
     return(generate_apple(grid, widht, height))
 
 def display_map(grid):
-    for line in grid:
-        print(line)
+    snake_sprite = pygame.image.load("snake.png").convert()
+    snake_sprite = pygame.transform.scale((snake_sprite), (32, 32))
+    wall_sprite = pygame.image.load("wall.png").convert()
+    wall_sprite = pygame.transform.scale(wall_sprite, (32, 32))
+    pygame.init()
+    screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE)
+    run = True
+    while run:
+        pygame.draw.rect(screen, 'red', [200, 200, 100, 100])
+        for line in grid:
+            for char in line:
+                if char == "1":
+                    screen.blit(wall_sprite,)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        pygame.display.flip()
+    pygame.quit()
+
+    #for line in grid:
+    #    print(line)
 
 def main():
     print("Main")
