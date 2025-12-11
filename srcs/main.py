@@ -51,7 +51,7 @@ def generate_elements(grid, widht, height):
                 else:
                     print("Error to had snake_len")
                 i = i + 1
-                grid[x_snake][y_snake] = "P"
+                grid[x_snake][y_snake] = "S"
         break
     return(grid)
 
@@ -108,7 +108,7 @@ def snake_moov(new_x, new_y, grid):
     grid[snake_len[len(snake_len) - 1][0]][snake_len[len(snake_len) - 1][1]] = '0'
     for i in range(len(snake_len) - 1, 0, -1):
         snake_len[i] = snake_len[i - 1]
-        grid[snake_len[i][0]][snake_len[i][1]] = 'P'
+        grid[snake_len[i][0]][snake_len[i][1]] = 'S'
     snake_len[0] = (new_x, new_y)
     return(grid)
 
@@ -124,7 +124,7 @@ def change_direction(x, y, grid, widht, height):
         grid = new_apple(grid, height, widht, 'R')
         grid = update_len(grid, 'R')
     grid[snake_xpos][snake_ypos] = '0'
-    if(grid[snake_xpos + x][snake_ypos + y] == 'P'):
+    if(grid[snake_xpos + x][snake_ypos + y] == 'P' or grid[snake_xpos + x][snake_ypos + y] == 'S'):
         print("GAME OVER, SNAKE CROSSING ITSELF")
         exit()
     grid[snake_xpos + x][snake_ypos + y] = 'P'
@@ -158,15 +158,17 @@ def display_map(grid):
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
                 if char == "1":
-                    screen.blit(dico_texture[1], (j * tile_sprite, i * tile_sprite))
+                    screen.blit(dico_texture[2], (j * tile_sprite, i * tile_sprite))
                 elif char == "P":
                     screen.blit(dico_texture[0], (j * tile_sprite, i * tile_sprite))
+                elif char == "S":
+                    screen.blit(dico_texture[1], (j * tile_sprite, i * tile_sprite))
                 elif char == "0":
-                    screen.blit(dico_texture[2], (j * tile_sprite, i * tile_sprite))
-                elif char == "R":
                     screen.blit(dico_texture[3], (j * tile_sprite, i * tile_sprite))
-                elif char == "G":
+                elif char == "R":
                     screen.blit(dico_texture[4], (j * tile_sprite, i * tile_sprite))
+                elif char == "G":
+                    screen.blit(dico_texture[5], (j * tile_sprite, i * tile_sprite))
         pygame.display.flip()
     pygame.quit()
 

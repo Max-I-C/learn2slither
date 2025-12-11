@@ -7,8 +7,12 @@ def texture_init():
     snake_sprite = pygame.image.load("../texture/snake.png").convert()
     snake_sprite = pygame.transform.scale((snake_sprite), (tile_sprite, tile_sprite))
     dico_texture.append(snake_sprite)
+    # -- Snake body -- #
+    snake_body_sprite = pygame.image.load("../texture/body.jpg").convert()
+    snake_body_sprite = pygame.transform.scale((snake_body_sprite), (tile_sprite, tile_sprite))
+    dico_texture.append(snake_body_sprite)
     # -- Wall -- # 
-    wall_sprite = pygame.image.load("../texture/wall.png").convert()
+    wall_sprite = pygame.image.load("../texture/wall.jpg").convert()
     wall_sprite = pygame.transform.scale(wall_sprite, (tile_sprite, tile_sprite))
     dico_texture.append(wall_sprite)
     # -- Floor -- #
