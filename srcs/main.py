@@ -116,7 +116,8 @@ def change_direction(x, y, grid, widht, height):
     global snake_ypos
     global snake_xpos
     if(snake_xpos + x > widht - 2 or snake_xpos + x < 1 or snake_ypos + y > height - 2 or snake_ypos + y < 1):
-        return(grid)
+        print("GAME OVER, SNAKE HIT A WALL")
+        exit()
     if(grid[snake_xpos + x][snake_ypos + y] == 'G'):
         grid = new_apple(grid, height, widht, 'G')
         grid = update_len(grid, 'G')
