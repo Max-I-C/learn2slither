@@ -1,6 +1,7 @@
 from graphic import texture 
 import random
 import pygame
+import time
 import pdb
 
 class MyGame():
@@ -129,6 +130,47 @@ def change_direction(x, y, grid, widht, height, _game):
     grid = snake_moov(_game.snake_xpos, _game.snake_ypos, grid, _game)
     return(grid)
 
+def build_vision(_game, grid):
+    snake_vision = {
+        "UP": [],
+        "DOWN": [],
+        "LEFT": [],
+        "RIGHT": [] 
+    }
+    max_x = len(grid)
+    max_y = len(grid[0])
+    x = _game.snake_xpos + 1
+    y = _game.snake_ypos + 1
+    while(x < max_x):
+        snake_vision["DOWN"].append(grid[x][_game.snake_ypos])
+        x += 1
+    while(y < max_y):
+        snake_vision["RIGHT"].append(grid[_game.snake_xpos][y])
+        y = y + 1
+    x = _game.snake_xpos - 1 
+    y = _game.snake_ypos - 1
+    while(x >= 0):
+        snake_vision["UP"].append(grid[x][_game.snake_ypos])
+        x -= 1
+    while(y >= 0):
+        snake_vision["LEFT"].append(grid[_game.snake_xpos][y])
+        y -= 1
+    return(snake_vision)
+    
+def moov_snake(_game, grid, width, height):
+    snake_vision = build_vision(_game, grid)
+    if(snake_vision["UP"][0] == '0' or snake_vision["UP"][0] == 'G'):
+        grid = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
+    elif(snake_vision["DOWN"][0] == '0' or snake_vision["DOWN"][0] == 'G'):
+        grid = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
+    elif(snake_vision["LEFT"][0] == '0' or snake_vision["LEFT"][0] == 'G'):
+        grid = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
+    elif(snake_vision["RIGHT"][0] == '0' or snake_vision["RIGHT"][0] == 'G'):
+        grid = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
+    else:
+        print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
+    print(snake_vision)
+
 def display_map(grid, _game):
     width = len(grid[0]) * _game.tile_sprite
     height = len(grid) * _game.tile_sprite
@@ -138,19 +180,21 @@ def display_map(grid, _game):
     dico_texture = texture.texture_init(_game)
     run = True
     while run:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    grid = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
-                elif event.key == pygame.K_s:
-                    grid = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
-                elif event.key == pygame.K_d:
-                    grid = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
-                elif event.key == pygame.K_a:
-                    grid = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
-                    
+        moov_snake(_game, grid, width, height)
+        time.sleep(0.1)
+#        for event in pygame.event.get():
+#            if event.type == pygame.QUIT:
+#                run = False
+#            if event.type == pygame.KEYDOWN:
+#                if event.key == pygame.K_w:
+#                    grid = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
+#                elif event.key == pygame.K_s:
+#                    grid = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
+#                elif event.key == pygame.K_d:
+#                    grid = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
+#                elif event.key == pygame.K_a:
+#                    grid = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
+#                    
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
                 if char == "1":
