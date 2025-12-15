@@ -133,6 +133,7 @@ def change_direction(x, y, grid, widht, height, _game):
 def build_vision(_game, grid):
     snake_vision = {
         "UP": [],
+        "CENTER" : ["P"],
         "DOWN": [],
         "LEFT": [],
         "RIGHT": [] 
