@@ -15,6 +15,8 @@ class MyGame():
         self.snake_len = []
 
 def display_map(grid, _game, model):
+    for lines in grid:
+        print("first verif", lines)
     width = len(grid[0]) * _game.tile_sprite
     height = len(grid) * _game.tile_sprite
 
@@ -23,7 +25,8 @@ def display_map(grid, _game, model):
     dico_texture = texture.texture_init(_game)
     run = True
     while run:
-        if (moov_snake(_game, grid, width, height, model) == False):
+        grid = moov_snake(_game, grid, width, height, model)
+        if (grid == False):
             return False
         time.sleep(1)
         for i, row in enumerate(grid):
@@ -49,8 +52,6 @@ def main():
     model = create_model(input_size=40, output_size=4)
     while True:
         grid = generate_map(10, 10, _game)
-        for lines in grid:
-            print(lines)
         if (display_map(grid, _game, model) == True):
             break
     print("End of the training model.")

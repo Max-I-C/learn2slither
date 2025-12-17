@@ -46,6 +46,7 @@ def generate_elements(grid, widht, height, _game):
 
 def generate_map(widht, height, _game):
     #breakpoint() #Debug
+    _game.snake_len = []
     grid = []
     for i in range(height):
         row = []

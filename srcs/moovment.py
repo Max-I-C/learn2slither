@@ -53,28 +53,32 @@ def change_direction(x, y, grid, widht, height, _game):
     grid = snake_moov(_game.snake_xpos, _game.snake_ypos, grid, _game)
     return(grid)
 
-
-    
 def moov_snake(_game, grid, width, height, model):
-    print(encode_vision(build_vision(_game, grid)))
+    for lines in grid:
+        print("second verif", lines)
+    #print(encode_vision(build_vision(_game, grid)))
     snake_vision = build_vision(_game, grid)
     decision = neuronal_network(snake_vision, model)
     if(decision == 1):
         grid = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
         if(grid == False):
             return False
+        return grid
     elif(decision == 2):
         grid = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
         if(grid == False):
             return False
+        return grid
     elif(decision == 3):
         grid = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
         if(grid == False):
             return False
+        return grid
     elif(decision == 4):
         grid = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
         if(grid == False):
             return False
+        return grid
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
     #for lines in grid:
