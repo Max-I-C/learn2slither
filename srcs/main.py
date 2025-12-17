@@ -23,8 +23,9 @@ def display_map(grid, _game, model):
     dico_texture = texture.texture_init(_game)
     run = True
     while run:
-        moov_snake(_game, grid, width, height, model)
-        time.sleep(0.1)
+        if (moov_snake(_game, grid, width, height, model) == False):
+            return False
+        time.sleep(1)
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
                 if char == "1":
@@ -46,8 +47,13 @@ def main():
     print("Main")
     _game = MyGame()
     model = create_model(input_size=40, output_size=4)
-    grid = generate_map(10, 10, _game)
-    display_map(grid, _game, model)
+    while True:
+        grid = generate_map(10, 10, _game)
+        for lines in grid:
+            print(lines)
+        if (display_map(grid, _game, model) == True):
+            break
+    print("End of the training model.")
     
 
 if(__name__ == "__main__"):

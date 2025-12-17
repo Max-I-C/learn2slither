@@ -56,7 +56,7 @@ def create_model(input_size, output_size):
     model = Sequential([
         Dense(64, activation='relu', input_shape=(input_size,)),
         Dense(64, activation='relu'),
-        Dense(output_size, activation='linear')  # Q-values
+        Dense(output_size, activation='linear')
     ])
     model.compile(
         optimizer='adam',
@@ -74,6 +74,6 @@ def neuronal_network(snake_vision, model, epsilon=0.1):
 
     # Exploitation
     q_values = model.predict(state, verbose=0)
-    action = np.argmax(q_values[0]) + 1  # +1 car actions = 1..4
+    action = np.argmax(q_values[0]) + 1
 
     return action

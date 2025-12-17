@@ -36,7 +36,7 @@ def snake_moov(new_x, new_y, grid, _game):
 def change_direction(x, y, grid, widht, height, _game):
     if(_game.snake_xpos + x > widht - 2 or _game.snake_xpos + x < 1 or _game.snake_ypos + y > height - 2 or _game.snake_ypos + y < 1):
         print("GAME OVER, SNAKE HIT A WALL")
-        exit()
+        return False
     if(grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'G'):
         grid = new_apple(grid, height, widht, 'G')
         grid = update_len(grid, 'G', _game)
@@ -46,7 +46,7 @@ def change_direction(x, y, grid, widht, height, _game):
     grid[_game.snake_xpos][_game.snake_ypos] = '0'
     if(grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'P' or grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'S'):
         print("GAME OVER, SNAKE CROSSING ITSELF")
-        exit()
+        return False
     grid[_game.snake_xpos + x][_game.snake_ypos + y] = 'P'
     _game.snake_xpos = _game.snake_xpos + x
     _game.snake_ypos = _game.snake_ypos + y
@@ -61,12 +61,23 @@ def moov_snake(_game, grid, width, height, model):
     decision = neuronal_network(snake_vision, model)
     if(decision == 1):
         grid = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
+        if(grid == False):
+            return False
     elif(decision == 2):
         grid = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
+        if(grid == False):
+            return False
     elif(decision == 3):
         grid = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
+        if(grid == False):
+            return False
     elif(decision == 4):
         grid = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
+        if(grid == False):
+            return False
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
-    print(snake_vision)
+    #for lines in grid:
+    #    print("->", lines)
+    #print(grid)
+    #print(snake_vision)
