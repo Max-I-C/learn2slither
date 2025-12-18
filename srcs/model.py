@@ -64,9 +64,9 @@ def create_model(input_size, output_size):
     )
     return model
 
-def neuronal_network(snake_vision, model, epsilon=0.1):
-    state = encode_vision(snake_vision)
+def neuronal_network(state, model, epsilon=0.1):
     state = state.reshape(1, -1)
+    epsilon = max(0.05, epsilon * 0.995)
 
     # Exploration (important en RL)
     if np.random.rand() < epsilon:
@@ -77,3 +77,17 @@ def neuronal_network(snake_vision, model, epsilon=0.1):
     action = np.argmax(q_values[0]) + 1
 
     return action
+
+def train_step(model, state, action, reward, next_state, done, gamma=0.95):
+    state = state.reshape(1, -1)
+    next_state = next_state.reshape(1, -1)
+
+    q_values = model.predict(state, verbose=0)
+
+    if done:
+        q_values[0][action - 1] = reward
+    else:
+        next_q = model.predict(next_state, verbose=0)
+        q_values[0][action - 1] = reward + gamma * np.max(next_q)
+
+    model.fit(state, q_values, verbose=0)

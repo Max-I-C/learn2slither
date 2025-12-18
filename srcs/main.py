@@ -15,8 +15,6 @@ class MyGame():
         self.snake_len = []
 
 def display_map(grid, _game, model):
-    for lines in grid:
-        print("first verif", lines)
     width = len(grid[0]) * _game.tile_sprite
     height = len(grid) * _game.tile_sprite
 
@@ -28,7 +26,7 @@ def display_map(grid, _game, model):
         grid = moov_snake(_game, grid, width, height, model)
         if (grid == False):
             return False
-        time.sleep(1)
+        time.sleep(0.1)
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
                 if char == "1":

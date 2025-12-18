@@ -1,14 +1,11 @@
 from generation import new_apple
-from model import build_vision, neuronal_network, encode_vision
+from model import build_vision, neuronal_network, encode_vision, train_step
 
 def update_len(grid, _apple, _game):
     if(_apple == 'R'):
         grid[_game.snake_len[len(_game.snake_len) - 1][0]][_game.snake_len[len(_game.snake_len) - 1][1]] = '0'
         _game.snake_len.pop()
         print("Snake -1 of len")
-        if(len(_game.snake_len) == 1):
-            print("GAME OVER, SNAKE TOO LITLE")
-            exit()
         return(grid)
     x_last = _game.snake_len[len(_game.snake_len) - 1][0] 
     y_last = _game.snake_len[len(_game.snake_len) - 1][1]
@@ -26,7 +23,11 @@ def update_len(grid, _apple, _game):
     return(grid)
 
 def snake_moov(new_x, new_y, grid, _game):
-    grid[_game.snake_len[len(_game.snake_len) - 1][0]][_game.snake_len[len(_game.snake_len) - 1][1]] = '0'
+    if not _game.snake_len:
+        print("CA A PAS CRASHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        return grid 
+    tail_x, tail_y = _game.snake_len[-1]
+    grid[tail_x][tail_y] = '0'
     for i in range(len(_game.snake_len) - 1, 0, -1):
         _game.snake_len[i] = _game.snake_len[i - 1]
         grid[_game.snake_len[i][0]][_game.snake_len[i][1]] = 'S'
@@ -34,53 +35,69 @@ def snake_moov(new_x, new_y, grid, _game):
     return(grid)
 
 def change_direction(x, y, grid, widht, height, _game):
-    if(_game.snake_xpos + x > widht - 2 or _game.snake_xpos + x < 1 or _game.snake_ypos + y > height - 2 or _game.snake_ypos + y < 1):
+    nx = _game.snake_xpos + x
+    ny = _game.snake_ypos + y 
+    
+    if(nx > widht - 2 or nx < 1 or ny > height - 2 or ny < 1):
         print("GAME OVER, SNAKE HIT A WALL")
-        return False
-    if(grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'G'):
+        return grid, "WALL"
+    cell = grid[nx][ny]
+    if(cell == 'P' or cell == 'S'):
+        print("GAME OVER, SNAKE CROSSING ITSELF")
+        return grid, "SELF"
+    if(cell == 'G'):
+        event = "GREEN_APPLE"
         grid = new_apple(grid, height, widht, 'G')
         grid = update_len(grid, 'G', _game)
-    elif(grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'R'):
+    elif(cell == 'R'):
+        if(len(_game.snake_len) == 1):
+            print("GAME OVER, SNAKE TOO LITLE")
+            return grid, "SNAKE_LEN"
+        event = "RED_APPLE"
         grid = new_apple(grid, height, widht, 'R')
         grid = update_len(grid, 'R', _game)
+    else:
+        event = "MOOVE"
     grid[_game.snake_xpos][_game.snake_ypos] = '0'
-    if(grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'P' or grid[_game.snake_xpos + x][_game.snake_ypos + y] == 'S'):
-        print("GAME OVER, SNAKE CROSSING ITSELF")
-        return False
-    grid[_game.snake_xpos + x][_game.snake_ypos + y] = 'P'
-    _game.snake_xpos = _game.snake_xpos + x
-    _game.snake_ypos = _game.snake_ypos + y
-    grid = snake_moov(_game.snake_xpos, _game.snake_ypos, grid, _game)
-    return(grid)
+    grid[nx][ny] = 'P'
+    _game.snake_xpos = nx
+    _game.snake_ypos = ny
+    grid = snake_moov(nx, ny, grid, _game)
+    return(grid, event)
 
 def moov_snake(_game, grid, width, height, model):
-    for lines in grid:
-        print("second verif", lines)
     #print(encode_vision(build_vision(_game, grid)))
-    snake_vision = build_vision(_game, grid)
-    decision = neuronal_network(snake_vision, model)
+    state = encode_vision(build_vision(_game, grid))
+    decision = neuronal_network(state, model)
     if(decision == 1):
-        grid = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
-        if(grid == False):
-            return False
-        return grid
+        grid, event = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 2):
-        grid = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
-        if(grid == False):
-            return False
-        return grid
+        grid, event = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 3):
-        grid = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
-        if(grid == False):
-            return False
-        return grid
+        grid, event = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
     elif(decision == 4):
-        grid = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
-        if(grid == False):
-            return False
-        return grid
+        grid, event = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
+    done = False
+    if(event == "WALL" or event == "SELF" or event == "SNAKE_LEN"):
+        done = True
+        reward = -100
+    elif (event == "GREEN_APPLE"):
+        reward = +50
+    elif (event == "RED_APPLE"):
+        reward = -30
+    else:
+        reward = -1
+    
+    if(done):
+        next_state = state
+    else:
+        next_state = encode_vision(build_vision(_game, grid))
+    train_step(model, state, decision, reward, next_state, done)
+    if(done):
+        return(False)
+    return(grid)
     #for lines in grid:
     #    print("->", lines)
     #print(grid)

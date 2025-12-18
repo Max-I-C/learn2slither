@@ -23,25 +23,25 @@ def generate_elements(grid, widht, height, _game):
             _game.snake_xpos = x_snake
             _game.snake_ypos = y_snake
             _game.snake_len.append((_game.snake_xpos, _game.snake_ypos))
-            i = 0
-            while(i < 2):
-                if(grid[x_snake][y_snake + 1] == '0'):
+
+            while(len(_game.snake_len) < 3):
+                if(y_snake + 1 < widht - 1 and grid[x_snake][y_snake + 1] == '0'):
                     _game.snake_len.append((x_snake, y_snake + 1))
                     y_snake = y_snake + 1
-                elif(grid[x_snake][y_snake - 1] == '0'):
+                elif(y_snake - 1 > 0 and grid[x_snake][y_snake - 1] == '0'):
                     _game.snake_len.append((x_snake, y_snake - 1))
                     y_snake = y_snake - 1
-                elif(grid[x_snake + 1][y_snake] == '0'):
+                elif(x_snake + 1 < height - 1 and grid[x_snake + 1][y_snake] == '0'):
                     _game.snake_len.append((x_snake + 1, y_snake))
                     x_snake = x_snake + 1
-                elif(grid[x_snake - 1][y_snake] == '0'):
+                elif(x_snake - 1 > 0 and grid[x_snake - 1][y_snake] == '0'):
                     _game.snake_len.append((x_snake - 1, y_snake))
                     x_snake = x_snake - 1
                 else:
-                    print("Error to had snake_len")
-                i = i + 1
+                    break
                 grid[x_snake][y_snake] = "S"
-        break
+            print("Snake len at end of spawn:", len(_game.snake_len))
+            break
     return(grid)
 
 def generate_map(widht, height, _game):
