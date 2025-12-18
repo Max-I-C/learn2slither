@@ -74,19 +74,22 @@ def adding_to_dataset(event, _data):
         _data.deat_by_lenght += 1
     return
 
-
 def moov_snake(_game, grid, model, _data):
     #print(encode_vision(build_vision(_game, grid)))
     old_dist = dist_to_apple(_game)
     state = encode_vision(build_vision(_game, grid))
     decision = neuronal_network(state, model, _game)
     if(decision == 1):
+        _game.direction = 1
         grid, event = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 2):
+        _game.direction = 2
         grid, event = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 3):
+        _game.direction = 3
         grid, event = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
     elif(decision == 4):
+        _game.direction = 4
         grid, event = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
@@ -105,12 +108,7 @@ def moov_snake(_game, grid, model, _data):
         _data.red_apple_eated += 1
     else:
         new_dist = dist_to_apple(_game)
-        if(new_dist < old_dist):
-            reward += 10.0
-        elif(new_dist > old_dist):
-            reward -= 10.0
-        else:
-            reward -= 0.05
+        reward += (new_dist - old_dist) * 10.0
     if(done):
         next_state = state
     else:

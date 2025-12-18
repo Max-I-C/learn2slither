@@ -21,6 +21,7 @@ class Dataset():
 
 class MyGame():
     def __init__(self):
+        self.direction = 1
         self.epsilon = 1.0
         self.tile_sprite = 64
         self.snake_xpos = 0

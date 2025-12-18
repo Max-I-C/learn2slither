@@ -42,6 +42,20 @@ def generate_elements(grid, widht, height, _game):
                 else:
                     break
                 grid[x_snake][y_snake] = "S"
+            # Set initial direction based on the second segment so we forbid only the immediate reverse move
+            if len(_game.snake_len) >= 2:
+                hx, hy = _game.snake_len[0]
+                bx, by = _game.snake_len[1]
+                if bx == hx and by == hy + 1:      # body is to the right -> heading left
+                    _game.direction = 3
+                elif bx == hx and by == hy - 1:    # body is to the left -> heading right
+                    _game.direction = 4
+                elif bx == hx + 1 and by == hy:    # body is below -> heading up
+                    _game.direction = 1
+                elif bx == hx - 1 and by == hy:    # body is above -> heading down
+                    _game.direction = 2
+            else:
+                _game.direction = 1
             print("Snake len at end of spawn:", len(_game.snake_len))
             break
     return(grid)

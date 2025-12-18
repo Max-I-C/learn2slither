@@ -12,6 +12,13 @@ ENCODING = {
     "G" : 1.0
 }
 
+OPPOSITE = {
+    1:2, # UP and DOWN
+    2:1,
+    3:4, # LEFT AND RIGHT
+    4:3
+}
+
 def encode_vision(snake_vison, max_dist=10):
     state = []
     for direction in ["UP", "DOWN", "LEFT", "RIGHT"]:
@@ -66,16 +73,17 @@ def create_model(input_size, output_size):
 
 def neuronal_network(state, model, _game):
     state = state.reshape(1, -1)
+    valid_actions = get_valid_action(_game.direction) # Il faudrait trouver le moyen de passer la direction
 
     # Exploration (important en RL)
     if np.random.rand() < _game.epsilon:
-        return np.random.randint(1, 5)
+        return np.random.choice(valid_actions)
 
     # Exploitation
-    q_values = model.predict(state, verbose=0)
-    action = np.argmax(q_values[0]) + 1
-
-    return action
+    q_values = model.predict(state, verbose=0)[0]
+    valid_q_values = [q_values[a - 1] for a in valid_actions]
+    best_action = valid_actions[np.argmax(valid_q_values)]
+    return best_action
 
 def train_step(model, state, action, reward, next_state, done, gamma=0.95):
     state = state.reshape(1, -1)
@@ -95,3 +103,6 @@ def dist_to_apple(_game):
     sx, sy = _game.snake_xpos, _game.snake_ypos
     ax, ay = _game.green_x, _game.green_y
     return(abs(sx-ax) + abs(sy-ay))
+
+def get_valid_action(current_direction):
+    return [a for a in [1,2,3,4] if a != OPPOSITE[current_direction]]
