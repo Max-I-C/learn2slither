@@ -11,13 +11,17 @@ import pdb
 
 class Dataset():
     def __init__(self):
+        self.all_game = 0
         self.death_by_wall = 0
         self.death_by_snake = 0
         self.death_by_lenght = 0
         self.green_apple_eated = 0
         self.red_apple_eated = 0
     def __str__(self):
-        return f"death_wall: {self.death_by_wall}, death_snake: {self.death_by_snake}, death_lenght: {self.death_by_lenght}, green_apple: {self.green_apple_eated}, red_apple: {self.red_apple_eated}"
+        return (
+            f"total_game: {self.all_game}, death_wall: {self.death_by_wall}, death_snake: {self.death_by_snake}, death_lenght: {self.death_by_lenght}, green_apple: {self.green_apple_eated}, red_apple: {self.red_apple_eated}"
+            f"\n% of game loose by the wall: {(self.death_by_wall / self.all_game * 100) if self.all_game > 0 else 0:.2f}%"            
+        )
 
 class MyGame():
     def __init__(self):
@@ -100,6 +104,7 @@ def main():
             except Exception as e:
                 print("Problem while saving")
         episode += 1
+        _data.all_game += 1
         print(_data)
         _game.epsilon = max(0.05, 1.0 * (0.9995 ** episode))
     print("End of the training model.")
