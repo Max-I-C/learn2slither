@@ -14,6 +14,8 @@ def generate_elements(grid, widht, height, _game):
         y_green = random.randint(1, widht - 2)
         if(grid[x_green][y_green] == "0"):
             grid[x_green][y_green] = "G"
+            _game.green_x = x_green
+            _game.green_y = y_green 
             break
     while(True):
         x_snake = random.randint(1, height - 2)
@@ -58,11 +60,14 @@ def generate_map(widht, height, _game):
         grid.append(row)
     return(generate_elements(grid, widht, height, _game))
 
-def new_apple(grid, height, widht, apple):
+def new_apple(grid, height, widht, apple, _game):
     while(True):
         x_apple = random.randint(1, height - 2)
         y_apple = random.randint(1, widht - 2)
         if(grid[x_apple][y_apple] == "0"):
             grid[x_apple][y_apple] = apple
+            if(apple == 'G'):
+                _game.green_x = x_apple
+                _game.green_y = y_apple
             break
     return(grid)

@@ -2,19 +2,33 @@ from graphic import texture
 from moovment import moov_snake
 from model import create_model
 from generation import generate_map 
+from tensorflow.keras.models import load_model
 import pygame
 import time
 import numpy as np
+import argparse
 import pdb
 
 class MyGame():
     def __init__(self):
+        self.epsilon = 1.0
         self.tile_sprite = 64
         self.snake_xpos = 0
         self.snake_ypos = 0
+        self.green_x = 0
+        self.green_y = 0
         self.snake_len = []
 
-def display_map(grid, _game, model):
+def display_map_not_graphical(_game, grid, model):
+    while True:
+        grid = moov_snake(_game, grid, model)
+        if (grid == False):
+            return False
+        for lines in grid :
+            print(lines)
+        print('\n')
+
+def display_map_graphical(_game, grid, model):
     width = len(grid[0]) * _game.tile_sprite
     height = len(grid) * _game.tile_sprite
 
@@ -23,7 +37,7 @@ def display_map(grid, _game, model):
     dico_texture = texture.texture_init(_game)
     run = True
     while run:
-        grid = moov_snake(_game, grid, width, height, model)
+        grid = moov_snake(_game, grid, model)
         if (grid == False):
             return False
         time.sleep(0.1)
@@ -44,14 +58,37 @@ def display_map(grid, _game, model):
         pygame.display.flip()
     pygame.quit()
 
+def display_map(grid, _game, model, flag):
+    if (flag == "no_graphical"):
+        return(display_map_not_graphical(_game, grid, model))
+    else:
+        return(display_map_graphical(_game, grid, model))
+
 def main():
     print("Main")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("graph_flag", default="graphical")
+    args = parser.parse_args()
     _game = MyGame()
-    model = create_model(input_size=40, output_size=4)
-    while True:
+    try:
+        model = load_model("snake_model.keras")
+        print("Model loaded, continuing training....")
+    except:
+        model = create_model(input_size=40, output_size=4)
+        print("New model created")
+    episode = 0
+    while True and episode < 1000:
         grid = generate_map(10, 10, _game)
-        if (display_map(grid, _game, model) == True):
+        if (display_map(grid, _game, model, args.graph_flag) == True):
             break
+        if(episode % 100 == 0 and episode != 0):
+            try:
+                model.save("snake_model.keras")
+                print("Saving the model at ", episode)
+            except Exception as e:
+                print("Problem while saving")
+        episode += 1
+        _game.epsilon = max(0.05, 1.0 * (0.9995 ** episode))
     print("End of the training model.")
     
 

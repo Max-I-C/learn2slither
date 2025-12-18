@@ -8,8 +8,8 @@ ENCODING = {
     "1" : -1.0,
     "S" : -0.5,
     "P" : 0.0,
-    "R" : 1.0,
-    "G" : -1.0
+    "R" : -1.0,
+    "G" : 1.0
 }
 
 def encode_vision(snake_vison, max_dist=10):
@@ -64,12 +64,11 @@ def create_model(input_size, output_size):
     )
     return model
 
-def neuronal_network(state, model, epsilon=0.1):
+def neuronal_network(state, model, _game):
     state = state.reshape(1, -1)
-    epsilon = max(0.05, epsilon * 0.995)
 
     # Exploration (important en RL)
-    if np.random.rand() < epsilon:
+    if np.random.rand() < _game.epsilon:
         return np.random.randint(1, 5)
 
     # Exploitation
@@ -91,3 +90,8 @@ def train_step(model, state, action, reward, next_state, done, gamma=0.95):
         q_values[0][action - 1] = reward + gamma * np.max(next_q)
 
     model.fit(state, q_values, verbose=0)
+
+def dist_to_apple(_game):
+    sx, sy = _game.snake_xpos, _game.snake_ypos
+    ax, ay = _game.green_x, _game.green_y
+    return(abs(sx-ax) + abs(sy-ay))

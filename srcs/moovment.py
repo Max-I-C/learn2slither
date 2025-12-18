@@ -1,5 +1,5 @@
 from generation import new_apple
-from model import build_vision, neuronal_network, encode_vision, train_step
+from model import build_vision, neuronal_network, encode_vision, train_step, dist_to_apple
 
 def update_len(grid, _apple, _game):
     if(_apple == 'R'):
@@ -47,14 +47,14 @@ def change_direction(x, y, grid, widht, height, _game):
         return grid, "SELF"
     if(cell == 'G'):
         event = "GREEN_APPLE"
-        grid = new_apple(grid, height, widht, 'G')
+        grid = new_apple(grid, height, widht, 'G', _game)
         grid = update_len(grid, 'G', _game)
     elif(cell == 'R'):
         if(len(_game.snake_len) == 1):
             print("GAME OVER, SNAKE TOO LITLE")
             return grid, "SNAKE_LEN"
         event = "RED_APPLE"
-        grid = new_apple(grid, height, widht, 'R')
+        grid = new_apple(grid, height, widht, 'R', _game)
         grid = update_len(grid, 'R', _game)
     else:
         event = "MOOVE"
@@ -65,10 +65,11 @@ def change_direction(x, y, grid, widht, height, _game):
     grid = snake_moov(nx, ny, grid, _game)
     return(grid, event)
 
-def moov_snake(_game, grid, width, height, model):
+def moov_snake(_game, grid, model):
     #print(encode_vision(build_vision(_game, grid)))
+    old_dist = dist_to_apple(_game)
     state = encode_vision(build_vision(_game, grid))
-    decision = neuronal_network(state, model)
+    decision = neuronal_network(state, model, _game)
     if(decision == 1):
         grid, event = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 2):
@@ -79,8 +80,10 @@ def moov_snake(_game, grid, width, height, model):
         grid, event = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
+
+    reward = 0.0
     done = False
-    if(event == "WALL" or event == "SELF" or event == "SNAKE_LEN"):
+    if (event in ["WALL", "SELF", "SNAKE_LEN"]):
         done = True
         reward = -100
     elif (event == "GREEN_APPLE"):
@@ -88,8 +91,13 @@ def moov_snake(_game, grid, width, height, model):
     elif (event == "RED_APPLE"):
         reward = -30
     else:
-        reward = -1
-    
+        new_dist = dist_to_apple(_game)
+        if(new_dist < old_dist):
+            reward += 10.0
+        elif(new_dist > old_dist):
+            reward -= 10.0
+        else:
+            reward -= 0.05
     if(done):
         next_state = state
     else:
