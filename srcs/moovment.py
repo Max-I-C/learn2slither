@@ -65,7 +65,17 @@ def change_direction(x, y, grid, widht, height, _game):
     grid = snake_moov(nx, ny, grid, _game)
     return(grid, event)
 
-def moov_snake(_game, grid, model):
+def adding_to_dataset(event, _data):
+    if(event == "WALL"):
+        _data.death_by_wall += 1
+    elif(event == "SELF"):
+        _data.death_by_snake += 1
+    else:
+        _data.deat_by_lenght += 1
+    return
+
+
+def moov_snake(_game, grid, model, _data):
     #print(encode_vision(build_vision(_game, grid)))
     old_dist = dist_to_apple(_game)
     state = encode_vision(build_vision(_game, grid))
@@ -85,11 +95,14 @@ def moov_snake(_game, grid, model):
     done = False
     if (event in ["WALL", "SELF", "SNAKE_LEN"]):
         done = True
+        adding_to_dataset(event, _data)
         reward = -100
     elif (event == "GREEN_APPLE"):
         reward = +50
+        _data.green_apple_eated += 1        
     elif (event == "RED_APPLE"):
         reward = -30
+        _data.red_apple_eated += 1
     else:
         new_dist = dist_to_apple(_game)
         if(new_dist < old_dist):

@@ -7,7 +7,7 @@ ENCODING = {
     "0" : 0.0,
     "1" : -1.0,
     "S" : -0.5,
-    "P" : 0.0,
+    "P" : -0.5,
     "R" : -1.0,
     "G" : 1.0
 }
@@ -54,8 +54,8 @@ def build_vision(_game, grid):
 
 def create_model(input_size, output_size):
     model = Sequential([
-        Dense(64, activation='relu', input_shape=(input_size,)),
-        Dense(64, activation='relu'),
+        Dense(128, activation='relu', input_shape=(input_size,)),
+        Dense(128, activation='relu'),
         Dense(output_size, activation='linear')
     ])
     model.compile(
