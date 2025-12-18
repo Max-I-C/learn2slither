@@ -71,7 +71,7 @@ def adding_to_dataset(event, _data):
     elif(event == "SELF"):
         _data.death_by_snake += 1
     else:
-        _data.deat_by_lenght += 1
+        _data.death_by_lenght += 1
     return
 
 def moov_snake(_game, grid, model, _data):
