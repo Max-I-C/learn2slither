@@ -104,16 +104,18 @@ def moov_snake(_game, grid, model, _data):
         reward = +50
         _data.green_apple_eated += 1        
     elif (event == "RED_APPLE"):
-        reward = -30
+        reward = -60
         _data.red_apple_eated += 1
     else:
+        max_dist = len(grid) + len(grid[0])
         new_dist = dist_to_apple(_game)
-        reward += (new_dist - old_dist) * 10.0
+        reward += (max_dist - new_dist) / max_dist
+        reward -= 0.01  # pénalité temporelle
     if(done):
         next_state = state
     else:
         next_state = encode_vision(build_vision(_game, grid))
-    train_step(model, state, decision, reward, next_state, done)
+    train_step(model, state, decision, reward, next_state, done, _game)
     if(done):
         return(False)
     return(grid)

@@ -85,7 +85,7 @@ def neuronal_network(state, model, _game):
     best_action = valid_actions[np.argmax(valid_q_values)]
     return best_action
 
-def train_step(model, state, action, reward, next_state, done, gamma=0.95):
+def train_step(model, state, action, reward, next_state, done, _game, gamma=0.95):
     state = state.reshape(1, -1)
     next_state = next_state.reshape(1, -1)
 
@@ -94,9 +94,10 @@ def train_step(model, state, action, reward, next_state, done, gamma=0.95):
     if done:
         q_values[0][action - 1] = reward
     else:
-        next_q = model.predict(next_state, verbose=0)
-        q_values[0][action - 1] = reward + gamma * np.max(next_q)
-
+        next_q = model.predict(next_state, verbose=0)[0]
+        valid_actions = get_valid_action(_game.direction)
+        max_next_q = max(next_q[a - 1] for a in valid_actions)
+        q_values[0][action - 1] = reward + gamma * max_next_q
     model.fit(state, q_values, verbose=0)
 
 def dist_to_apple(_game):
