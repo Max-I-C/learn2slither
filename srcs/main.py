@@ -26,7 +26,7 @@ class Dataset():
 class MyGame():
     def __init__(self):
         self.direction = 1
-        self.epsilon = 1.0
+        self.epsilon = 0.08
         self.tile_sprite = 64
         self.snake_xpos = 0
         self.snake_ypos = 0
@@ -93,7 +93,7 @@ def main():
         model = create_model(input_size=40, output_size=4)
         print("New model created")
     episode = 0
-    while True and episode < 1000:
+    while True and episode < 10000:
         grid = generate_map(10, 10, _game)
         if (display_map(grid, _game, model, args.graph_flag, _data) == True):
             break
@@ -106,7 +106,7 @@ def main():
         episode += 1
         _data.all_game += 1
         print(_data)
-        _game.epsilon = max(0.05, 1.0 * (0.9995 ** episode))
+        _game.epsilon = max(0.02, _game.epsilon * 0.995)
     print("End of the training model.")
     
 
