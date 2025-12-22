@@ -102,8 +102,9 @@ def train_step(model, state, action, reward, next_state, done, _game, gamma=0.95
 
 def dist_to_apple(_game):
     sx, sy = _game.snake_xpos, _game.snake_ypos
-    ax, ay = _game.green_x, _game.green_y
-    return(abs(sx-ax) + abs(sy-ay))
-
+    return min(
+        abs(sx-x) + abs(sy-y)
+        for (x, y) in _game.green_apples
+    )
 def get_valid_action(current_direction):
     return [a for a in [1,2,3,4] if a != OPPOSITE[current_direction]]

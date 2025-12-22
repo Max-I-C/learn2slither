@@ -47,14 +47,14 @@ def change_direction(x, y, grid, widht, height, _game):
         return grid, "SELF"
     if(cell == 'G'):
         event = "GREEN_APPLE"
-        grid = new_apple(grid, height, widht, 'G', _game)
+        grid = new_apple(grid, height, widht, 'G', nx, ny, _game)
         grid = update_len(grid, 'G', _game)
     elif(cell == 'R'):
         if(len(_game.snake_len) == 1):
             print("GAME OVER, SNAKE TOO LITLE")
             return grid, "SNAKE_LEN"
         event = "RED_APPLE"
-        grid = new_apple(grid, height, widht, 'R', _game)
+        grid = new_apple(grid, height, widht, 'R', nx, ny, _game)
         grid = update_len(grid, 'R', _game)
     else:
         event = "MOOVE"
@@ -107,10 +107,10 @@ def moov_snake(_game, grid, model, _data):
         reward = -60
         _data.red_apple_eated += 1
     else:
-        max_dist = len(grid) + len(grid[0])
         new_dist = dist_to_apple(_game)
-        reward += (max_dist - new_dist) / max_dist
-        reward -= 0.01  # pénalité temporelle
+        delta = old_dist - new_dist
+        reward = delta * 0.3
+        reward -= 0.02  # pénalité temporelle
     if(done):
         next_state = state
     else:

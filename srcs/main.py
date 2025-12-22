@@ -30,8 +30,7 @@ class MyGame():
         self.tile_sprite = 64
         self.snake_xpos = 0
         self.snake_ypos = 0
-        self.green_x = 0
-        self.green_y = 0
+        self.green_apples = []
         self.snake_len = []
 
 def display_map_not_graphical(_game, grid, model, _data):
@@ -108,7 +107,7 @@ def main():
         print(_data)
         _game.epsilon = max(0.02, _game.epsilon * 0.995)
     print("End of the training model.")
-    
+
 
 if(__name__ == "__main__"):
     main()
