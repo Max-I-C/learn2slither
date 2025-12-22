@@ -99,7 +99,7 @@ def main():
             break
         if(episode % 100 == 0 and episode != 0):
             try:
-                model.save("snake_model.keras")
+                model.save(f"models/snake_model_{episode}.keras")
                 print("Saving the model at ", episode)
             except Exception as e:
                 print("Problem while saving")
