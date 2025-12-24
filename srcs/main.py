@@ -7,6 +7,7 @@ import pygame
 import time
 import numpy as np
 import argparse
+import json
 import pdb
 
 class Dataset():
@@ -26,7 +27,7 @@ class Dataset():
 class MyGame():
     def __init__(self):
         self.direction = 1
-        self.epsilon = 0.08
+        self.epsilon = 0
         self.tile_sprite = 64
         self.snake_xpos = 0
         self.snake_ypos = 0
@@ -86,24 +87,37 @@ def main():
     _game = MyGame()
     _data = Dataset()
     try:
-        model = load_model("snake_model.keras")
+        with open(".prog_data.json") as f:
+            data = json.load(f)
+            _game.epsilon = data["epsilone"]
+            episode = data["episode"]
+        print("Data found from the .json files")
+    except:
+        _game.epsilon = 1
+        episode = 0
+        print("No epsilon data found")
+    try:
+        model = load_model(f"models/snake_model_v2_{episode}.keras")
         print("Model loaded, continuing training....")
     except:
         model = create_model(input_size=40, output_size=4)
         print("New model created")
-    episode = 0
     while True and episode < 10000:
         grid = generate_map(10, 10, _game)
         if (display_map(grid, _game, model, args.graph_flag, _data) == True):
             break
         if(episode % 100 == 0 and episode != 0):
             try:
-                model.save(f"models/snake_model_{episode}.keras")
+                model.save(f"models/snake_model_v2_{episode}.keras")
                 print("Saving the model at ", episode)
+                data = {"epsilone": _game.epsilon, "episode": episode}
+                with open(".prog_data.json", "w") as f:
+                    json.dump(data, f)
             except Exception as e:
                 print("Problem while saving")
         episode += 1
         _data.all_game += 1
+        print("nb of episode ", episode)
         print(_data)
         _game.epsilon = max(0.02, _game.epsilon * 0.995)
     print("End of the training model.")
