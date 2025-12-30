@@ -1,14 +1,18 @@
 from graphic import texture
 from moovment import moov_snake
 from model import create_model
-from generation import generate_map 
+from generation import generate_map
 from tensorflow.keras.models import load_model
 import pygame
 import time
-import numpy as np
 import argparse
 import json
-import pdb
+
+
+class Model():
+    def __init___(self):
+        self.model = ""
+        self.episode = 0
 
 class Dataset():
     def __init__(self):
@@ -18,6 +22,7 @@ class Dataset():
         self.death_by_lenght = 0
         self.green_apple_eated = 0
         self.red_apple_eated = 0
+
     def __str__(self):
         return (
             f"total_game: {self.all_game}, death_wall: {self.death_by_wall}, death_snake: {self.death_by_snake}, death_lenght: {self.death_by_lenght}, green_apple: {self.green_apple_eated}, red_apple: {self.red_apple_eated}"
@@ -79,6 +84,24 @@ def display_map(grid, _game, model, flag, _data):
     else:
         return(display_map_graphical(_game, grid, model, _data))
 
+def collecting_data(_game, _model):
+    try:
+        with open(".prog_data.json") as f:
+            data = json.load(f)
+            _game.epsilon = data["epsilone"]
+            _model.episode = data["episode"]
+        print("Data found from the .json files")
+    except:
+        _game.epsilon = 1
+        _episode = 0
+        print("No epsilon data found")
+    try:
+        _model.model = load_model(f"models/snake_model_v2_{_model.episode}.keras")
+        print("Model loaded, continuing training....")
+    except:
+        _model.model = create_model(input_size=40, output_size=4)
+        print("New model created")
+
 def main():
     print("Main")
     parser = argparse.ArgumentParser()
@@ -86,38 +109,28 @@ def main():
     args = parser.parse_args()
     _game = MyGame()
     _data = Dataset()
+    _model = Model()
     try:
-        with open(".prog_data.json") as f:
-            data = json.load(f)
-            _game.epsilon = data["epsilone"]
-            episode = data["episode"]
-        print("Data found from the .json files")
+        collecting_data(_game, _model)
     except:
-        _game.epsilon = 1
-        episode = 0
-        print("No epsilon data found")
-    try:
-        model = load_model(f"models/snake_model_v2_{episode}.keras")
-        print("Model loaded, continuing training....")
-    except:
-        model = create_model(input_size=40, output_size=4)
-        print("New model created")
-    while True and episode < 10000:
+        print("Error while collecting data")
+
+    while True and _model.episode < 10000:
         grid = generate_map(10, 10, _game)
-        if (display_map(grid, _game, model, args.graph_flag, _data) == True):
+        if (display_map(grid, _game, _model.model, args.graph_flag, _data) == True):
             break
-        if(episode % 100 == 0 and episode != 0):
+        if(_model.episode % 100 == 0 and _model.episode != 0):
             try:
-                model.save(f"models/snake_model_v2_{episode}.keras")
-                print("Saving the model at ", episode)
-                data = {"epsilone": _game.epsilon, "episode": episode}
+                _model.model.save(f"models/snake_model_v2_{_model.episode}.keras")
+                print("Saving the model at ", _model.episode)
+                data = {"epsilone": _game.epsilon, "episode": _model.episode}
                 with open(".prog_data.json", "w") as f:
                     json.dump(data, f)
             except Exception as e:
                 print("Problem while saving")
-        episode += 1
+        _model.episode += 1
         _data.all_game += 1
-        print("nb of episode ", episode)
+        print("nb of episode ", _model.episode)
         print(_data)
         _game.epsilon = max(0.02, _game.epsilon * 0.995)
     print("End of the training model.")
