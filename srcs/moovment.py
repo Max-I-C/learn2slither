@@ -33,7 +33,7 @@ def snake_moov(new_x, new_y, grid, _game):
         grid[_game.snake_len[i][0]][_game.snake_len[i][1]] = 'S'
     _game.snake_len[0] = (new_x, new_y)
     return(grid)
-
+        
 def change_direction(x, y, grid, widht, height, _game):
     nx = _game.snake_xpos + x
     ny = _game.snake_ypos + y 

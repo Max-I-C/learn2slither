@@ -19,6 +19,35 @@ OPPOSITE = {
     4:3
 }
 
+def display_vision(grid, _game, snake_vision):
+    height = len(grid)
+    width = len(grid[0])
+    x = _game.snake_xpos
+    y = _game.snake_ypos
+    vision_map = [[" " for _ in range(width)] for _ in range(height)]
+    vision_map[x][y] = 'P'
+     
+    for i, cell in enumerate(snake_vision["LEFT"], start=1):
+        n_y = y - i
+        if (n_y >= 0):
+            vision_map[x][n_y] = cell
+    for i, cell in enumerate(snake_vision["RIGHT"], start=1):
+        n_y = y + i
+        if (n_y < width):
+            vision_map[x][n_y] = cell
+    for i, cell in enumerate(snake_vision["UP"], start=1):
+        n_x = x - i
+        if (n_x >= 0):
+            vision_map[n_x][y] = cell
+    for i, cell in enumerate(snake_vision["DOWN"], start=1):
+        n_x = x + i
+        if (n_x < height):
+            vision_map[n_x][y] = cell
+    
+    print('\n')
+    for lines in vision_map:
+        print(lines)
+
 def encode_vision(snake_vison, max_dist=10):
     state = []
     for direction in ["UP", "DOWN", "LEFT", "RIGHT"]:
@@ -57,6 +86,7 @@ def build_vision(_game, grid):
     while(y >= 0):
         snake_vision["LEFT"].append(grid[_game.snake_xpos][y])
         y -= 1
+    display_vision(grid, _game, snake_vision)
     return(snake_vision)
 
 def create_model(input_size, output_size):

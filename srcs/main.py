@@ -114,7 +114,6 @@ def main():
         collecting_data(_game, _model)
     except:
         print("Error while collecting data")
-
     while True and _model.episode < 10000:
         grid = generate_map(10, 10, _game)
         if (display_map(grid, _game, _model.model, args.graph_flag, _data) == True):
