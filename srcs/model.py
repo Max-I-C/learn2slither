@@ -45,8 +45,8 @@ def display_vision(grid, _game, snake_vision):
             vision_map[n_x][y] = cell
     
     print('\n')
-    for lines in vision_map:
-        print(lines)
+    for line in vision_map:
+        print("".join(line))
 
 def encode_vision(snake_vison, max_dist=10):
     state = []

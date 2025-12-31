@@ -38,6 +38,8 @@ class MyGame():
         self.snake_ypos = 0
         self.green_apples = []
         self.snake_len = []
+        self.max_length = 0
+        self.max_duration = 0
 
 def display_map_not_graphical(_game, grid, model, _data):
     while True:
@@ -79,7 +81,7 @@ def display_map_graphical(_game, grid, model, _data):
     pygame.quit()
 
 def display_map(grid, _game, model, flag, _data):
-    if (flag == "no_graphical"):
+    if (flag == False):
         return(display_map_not_graphical(_game, grid, model, _data))
     else:
         return(display_map_graphical(_game, grid, model, _data))
@@ -93,7 +95,7 @@ def collecting_data(_game, _model):
         print("Data found from the .json files")
     except:
         _game.epsilon = 1
-        _episode = 0
+        _model.episode = 0
         print("No epsilon data found")
     try:
         _model.model = load_model(f"models/snake_model_v2_{_model.episode}.keras")
@@ -104,9 +106,31 @@ def collecting_data(_game, _model):
 
 def main():
     print("Main")
-    parser = argparse.ArgumentParser()
-    parser.add_argument("graph_flag", default="graphical")
+    parser = argparse.ArgumentParser(description="Learn2Slither")
+    
+    parser.add_argument(
+        "-g", "--graphical",
+        action="store_true",
+        help="Enable graphical mode (pygame)"
+    )
+
+    parser.add_argument(
+        "-r", "--real",
+        action="store_true",
+        help="Enable training mode"
+    )
+
+    parser.add_argument(
+        "-n", "--number-of-games",
+        type=int,
+        default=10000,
+        help="Number of game to run"
+    )
+
     args = parser.parse_args()
+    graph = False
+    if(args.graphical):
+        graph = True
     _game = MyGame()
     _data = Dataset()
     _model = Model()
@@ -114,9 +138,14 @@ def main():
         collecting_data(_game, _model)
     except:
         print("Error while collecting data")
-    while True and _model.episode < 10000:
+    if(args.real):
+        _game.epsilon = 0
+    if(args.number_of_games is not None):
+        max_game = args.number_of_games
+    print(" -> ", _model.episode, " -> ", max_game)
+    while True and _data.all_game < max_game:
         grid = generate_map(10, 10, _game)
-        if (display_map(grid, _game, _model.model, args.graph_flag, _data) == True):
+        if (display_map(grid, _game, _model.model, graph, _data) == True):
             break
         if(_model.episode % 100 == 0 and _model.episode != 0):
             try:
@@ -129,7 +158,10 @@ def main():
                 print("Problem while saving")
         _model.episode += 1
         _data.all_game += 1
+        if(_game.max_length < len(_game.snake_len)):
+            _game.max_length = len(_game.snake_len)
         print("nb of episode ", _model.episode)
+        print("Best score : ", _game.max_length)
         print(_data)
         _game.epsilon = max(0.02, _game.epsilon * 0.995)
     print("End of the training model.")

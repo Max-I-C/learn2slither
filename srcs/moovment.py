@@ -81,15 +81,19 @@ def moov_snake(_game, grid, model, _data):
     decision = neuronal_network(state, model, _game)
     if(decision == 1):
         _game.direction = 1
+        print("UP")
         grid, event = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 2):
         _game.direction = 2
+        print("DOWN")
         grid, event = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
     elif(decision == 3):
         _game.direction = 3
+        print("LEFT")
         grid, event = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
     elif(decision == 4):
         _game.direction = 4
+        print("RIGHT")
         grid, event = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
