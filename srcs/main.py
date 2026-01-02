@@ -104,10 +104,9 @@ def collecting_data(_game, _model):
         _model.model = create_model(input_size=40, output_size=4)
         print("New model created")
 
-def main():
-    print("Main")
+def args_manager():
     parser = argparse.ArgumentParser(description="Learn2Slither")
-    
+
     parser.add_argument(
         "-g", "--graphical",
         action="store_true",
@@ -126,8 +125,13 @@ def main():
         default=10000,
         help="Number of game to run"
     )
-
     args = parser.parse_args()
+    return(args)
+
+def main():
+    print("Main")
+    args = args_manager()
+
     graph = False
     if(args.graphical):
         graph = True
