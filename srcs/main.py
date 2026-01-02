@@ -1,6 +1,6 @@
 from graphic import texture
 from moovment import moov_snake
-from model import create_model
+from model import create_model, save_model
 from generation import generate_map
 from tensorflow.keras.models import load_model
 import pygame
@@ -17,6 +17,7 @@ class Model():
 class Dataset():
     def __init__(self):
         self.all_game = 0
+        self.max_game = 0
         self.death_by_wall = 0
         self.death_by_snake = 0
         self.death_by_lenght = 0
@@ -40,6 +41,7 @@ class MyGame():
         self.snake_len = []
         self.max_length = 0
         self.max_duration = 0
+        self.graph = False
 
 def display_map_not_graphical(_game, grid, model, _data):
     while True:
@@ -128,48 +130,41 @@ def args_manager():
     args = parser.parse_args()
     return(args)
 
-def main():
-    print("Main")
-    args = args_manager()
+def save_and_display(_model, _data, _game):
+    _model.episode += 1
+    _data.all_game += 1
+    if(_game.max_length < len(_game.snake_len)):
+        _game.max_length = len(_game.snake_len)
+    print("nb of episode ", _model.episode)
+    print("Best score : ", _game.max_length)
+    print(_data)
+    _game.epsilon = max(0.02, _game.epsilon * 0.995)
 
-    graph = False
-    if(args.graphical):
-        graph = True
-    _game = MyGame()
-    _data = Dataset()
-    _model = Model()
-    try:
-        collecting_data(_game, _model)
-    except:
-        print("Error while collecting data")
+def store_args_data(args, _game, _data):
     if(args.real):
         _game.epsilon = 0
     if(args.number_of_games is not None):
-        max_game = args.number_of_games
-    print(" -> ", _model.episode, " -> ", max_game)
-    while True and _data.all_game < max_game:
+        _game.max_game = args.number_of_games
+    _data.graph = False
+    if(args.graphical):
+        _data.graph = True
+
+def main():
+    args = args_manager()
+    _game = MyGame()
+    _data = Dataset()
+    _model = Model()
+    collecting_data(_game, _model)
+    store_args_data(args, _game, _data)
+    print(" -> ", _model.episode, " -> ", _game.max_game)
+    while True and _data.all_game < _game.max_game:
         grid = generate_map(10, 10, _game)
-        if (display_map(grid, _game, _model.model, graph, _data) == True):
+        if (display_map(grid, _game, _model.model, _data.graph, _data) == True):
             break
         if(_model.episode % 100 == 0 and _model.episode != 0):
-            try:
-                _model.model.save(f"models/snake_model_v2_{_model.episode}.keras")
-                print("Saving the model at ", _model.episode)
-                data = {"epsilone": _game.epsilon, "episode": _model.episode}
-                with open(".prog_data.json", "w") as f:
-                    json.dump(data, f)
-            except Exception as e:
-                print("Problem while saving")
-        _model.episode += 1
-        _data.all_game += 1
-        if(_game.max_length < len(_game.snake_len)):
-            _game.max_length = len(_game.snake_len)
-        print("nb of episode ", _model.episode)
-        print("Best score : ", _game.max_length)
-        print(_data)
-        _game.epsilon = max(0.02, _game.epsilon * 0.995)
+            save_model(_model, _game)
+        save_and_display(_model, _data, _game)
     print("End of the training model.")
-
 
 if(__name__ == "__main__"):
     main()

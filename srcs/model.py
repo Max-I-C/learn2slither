@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 import numpy as np
+import json
 
 ENCODING = {
     "0" : 0.0,
@@ -136,5 +137,16 @@ def dist_to_apple(_game):
         abs(sx-x) + abs(sy-y)
         for (x, y) in _game.green_apples
     )
+
 def get_valid_action(current_direction):
     return [a for a in [1,2,3,4] if a != OPPOSITE[current_direction]]
+
+def save_model(_model, _game):
+    try:
+        _model.model.save(f"models/snake_model_v2_{_model.episode}.keras")
+        print("Saving the model at ", _model.episode)
+        data = {"epsilone": _game.epsilon, "episode": _model.episode}
+        with open(".prog_data.json", "w") as f:
+            json.dump(data, f)
+    except Exception as e:
+        print("ERROR WHILE SAVING")
