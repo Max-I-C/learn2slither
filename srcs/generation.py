@@ -1,5 +1,21 @@
 import random
 
+# -- 4. 
+def generate_map(widht, height, _game):
+    #breakpoint() #Debug
+    _game.snake_len = []
+    grid = []
+    for i in range(height):
+        row = []
+        for j in range(widht):
+            if(i == 0 or i == height - 1 or j == 0 or j == widht - 1):
+                row.append("1")
+            else:
+                row.append("0")
+        grid.append(row)
+    return(generate_elements(grid, widht, height, _game))
+
+# -- 5.
 def generate_elements(grid, widht, height, _game):
     
     #breakpoint() #Debug
@@ -59,20 +75,7 @@ def generate_elements(grid, widht, height, _game):
             break
     return(grid)
 
-def generate_map(widht, height, _game):
-    #breakpoint() #Debug
-    _game.snake_len = []
-    grid = []
-    for i in range(height):
-        row = []
-        for j in range(widht):
-            if(i == 0 or i == height - 1 or j == 0 or j == widht - 1):
-                row.append("1")
-            else:
-                row.append("0")
-        grid.append(row)
-    return(generate_elements(grid, widht, height, _game))
-
+# -- 12.1
 def new_apple(grid, height, widht, apple, x, y, _game):
     while(True):
         x_apple = random.randint(1, height - 2)

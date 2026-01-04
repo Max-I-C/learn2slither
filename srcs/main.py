@@ -1,13 +1,7 @@
-from graphic import texture
-from moovment import moov_snake
-from model import create_model, save_model
+from data import collecting_data, args_manager, save_and_display, store_args_data
+from model import save_model
 from generation import generate_map
-from tensorflow.keras.models import load_model
-import pygame
-import time
-import argparse
-import json
-
+from display import display_map
 
 class Model():
     def __init___(self):
@@ -43,112 +37,7 @@ class MyGame():
         self.max_duration = 0
         self.graph = False
 
-def display_map_not_graphical(_game, grid, model, _data):
-    while True:
-        grid = moov_snake(_game, grid, model, _data)
-        if (grid == False):
-            return False
-        for lines in grid :
-            print(lines)
-        print('\n')
-
-def display_map_graphical(_game, grid, model, _data):
-    width = len(grid[0]) * _game.tile_sprite
-    height = len(grid) * _game.tile_sprite
-
-    pygame.init()
-    screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-    dico_texture = texture.texture_init(_game)
-    run = True
-    while run:
-        grid = moov_snake(_game, grid, model, _data)
-        if (grid == False):
-            return False
-        time.sleep(0.1)
-        for i, row in enumerate(grid):
-            for j, char in enumerate(row):
-                if char == "1":
-                    screen.blit(dico_texture[2], (j * _game.tile_sprite, i * _game.tile_sprite))
-                elif char == "P":
-                    screen.blit(dico_texture[0], (j * _game.tile_sprite, i * _game.tile_sprite))
-                elif char == "S":
-                    screen.blit(dico_texture[1], (j * _game.tile_sprite, i * _game.tile_sprite))
-                elif char == "0":
-                    screen.blit(dico_texture[3], (j * _game.tile_sprite, i * _game.tile_sprite))
-                elif char == "R":
-                    screen.blit(dico_texture[4], (j * _game.tile_sprite, i * _game.tile_sprite))
-                elif char == "G":
-                    screen.blit(dico_texture[5], (j * _game.tile_sprite, i * _game.tile_sprite))
-        pygame.display.flip()
-    pygame.quit()
-
-def display_map(grid, _game, model, flag, _data):
-    if (flag == False):
-        return(display_map_not_graphical(_game, grid, model, _data))
-    else:
-        return(display_map_graphical(_game, grid, model, _data))
-
-def collecting_data(_game, _model):
-    try:
-        with open(".prog_data.json") as f:
-            data = json.load(f)
-            _game.epsilon = data["epsilone"]
-            _model.episode = data["episode"]
-        print("Data found from the .json files")
-    except:
-        _game.epsilon = 1
-        _model.episode = 0
-        print("No epsilon data found")
-    try:
-        _model.model = load_model(f"models/snake_model_v2_{_model.episode}.keras")
-        print("Model loaded, continuing training....")
-    except:
-        _model.model = create_model(input_size=40, output_size=4)
-        print("New model created")
-
-def args_manager():
-    parser = argparse.ArgumentParser(description="Learn2Slither")
-
-    parser.add_argument(
-        "-g", "--graphical",
-        action="store_true",
-        help="Enable graphical mode (pygame)"
-    )
-
-    parser.add_argument(
-        "-r", "--real",
-        action="store_true",
-        help="Enable training mode"
-    )
-
-    parser.add_argument(
-        "-n", "--number-of-games",
-        type=int,
-        default=10000,
-        help="Number of game to run"
-    )
-    args = parser.parse_args()
-    return(args)
-
-def save_and_display(_model, _data, _game):
-    _model.episode += 1
-    _data.all_game += 1
-    if(_game.max_length < len(_game.snake_len)):
-        _game.max_length = len(_game.snake_len)
-    print("nb of episode ", _model.episode)
-    print("Best score : ", _game.max_length)
-    print(_data)
-    _game.epsilon = max(0.02, _game.epsilon * 0.995)
-
-def store_args_data(args, _game, _data):
-    if(args.real):
-        _game.epsilon = 0
-    if(args.number_of_games is not None):
-        _game.max_game = args.number_of_games
-    _data.graph = False
-    if(args.graphical):
-        _data.graph = True
-
+# -- 0. -- #
 def main():
     args = args_manager()
     _game = MyGame()

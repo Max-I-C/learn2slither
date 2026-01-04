@@ -1,6 +1,8 @@
 from generation import new_apple
-from model import build_vision, neuronal_network, encode_vision, train_step, dist_to_apple
+from model import neuronal_network, train_step, dist_to_apple
+from vision import build_vision, encode_vision
 
+# -- 12.2
 def update_len(grid, _apple, _game):
     if(_apple == 'R'):
         grid[_game.snake_len[len(_game.snake_len) - 1][0]][_game.snake_len[len(_game.snake_len) - 1][1]] = '0'
@@ -22,6 +24,7 @@ def update_len(grid, _apple, _game):
     print("Snake +1 of len")
     return(grid)
 
+# -- 13.
 def snake_moov(new_x, new_y, grid, _game):
     if not _game.snake_len:
         print("CA A PAS CRASHHHHHHHHHHHHHHHHHHHHHHHHHHH")
@@ -33,7 +36,8 @@ def snake_moov(new_x, new_y, grid, _game):
         grid[_game.snake_len[i][0]][_game.snake_len[i][1]] = 'S'
     _game.snake_len[0] = (new_x, new_y)
     return(grid)
-        
+
+# -- 12. 
 def change_direction(x, y, grid, widht, height, _game):
     nx = _game.snake_xpos + x
     ny = _game.snake_ypos + y 
@@ -74,6 +78,7 @@ def adding_to_dataset(event, _data):
         _data.death_by_lenght += 1
     return
 
+# -- 8.
 def moov_snake(_game, grid, model, _data):
     #print(encode_vision(build_vision(_game, grid)))
     old_dist = dist_to_apple(_game)
