@@ -6,11 +6,12 @@ import json
 
 # -- This is used to map the way that the snake can't go for logic reason -- #
 OPPOSITE = {
-    1:2, # UP and DOWN
-    2:1,
-    3:4, # LEFT AND RIGHT
-    4:3
+    1: 2,  # UP and DOWN
+    2: 1,
+    3: 4,  # LEFT AND RIGHT
+    4: 3
 }
+
 
 # -- 2.1. This create the model in case no model are provided -- #
 def create_model(input_size, output_size):
@@ -25,13 +26,15 @@ def create_model(input_size, output_size):
     )
     return model
 
-# -- 9. This is to calculate the distance beetwen the pos of the snake, and the closer green_apple -- # 
+
+# -- 9. This is to calculate the distance beetwen the pos of the snake, and the closer green_apple -- #
 def dist_to_apple(_game):
     sx, sy = _game.snake_xpos, _game.snake_ypos
     return min(
         abs(sx-x) + abs(sy-y)
         for (x, y) in _game.green_apples
     )
+
 
 # -- 11. This function is the one that will choice what the model consider the best action to do and verify that is a legit action -- #
 def neuronal_network(state, model, _game):
@@ -48,6 +51,7 @@ def neuronal_network(state, model, _game):
     best_action = valid_actions[np.argmax(valid_q_values)]
     return best_action
 
+
 # -- 13. This save the models at all [episode] times -- #
 def save_model(_model, _game):
     try:
@@ -56,8 +60,9 @@ def save_model(_model, _game):
         data = {"epsilone": _game.epsilon, "episode": _model.episode}
         with open(".prog_data.json", "w") as f:
             json.dump(data, f)
-    except Exception as e:
+    except Exception:
         print("ERROR WHILE SAVING")
+
 
 # -- This function trained the model to tell him if what he choiced to do is good or not -- #
 def train_step(model, state, action, reward, next_state, done, _game, gamma=0.95):
@@ -75,6 +80,7 @@ def train_step(model, state, action, reward, next_state, done, _game, gamma=0.95
         q_values[0][action - 1] = reward + gamma * max_next_q
     model.fit(state, q_values, verbose=0)
 
+
 # -- This function verified if the action is "possible" so if the snake look up, he can't go down for logic reason -- #
 def get_valid_action(current_direction):
-    return [a for a in [1,2,3,4] if a != OPPOSITE[current_direction]]
+    return [a for a in [1, 2, 3, 4] if a != OPPOSITE[current_direction]]

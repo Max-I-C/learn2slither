@@ -1,4 +1,5 @@
-import pygame 
+import pygame
+
 
 # -- Function that contain all the texture for the pygame -- #
 def texture_init(_game):
@@ -11,7 +12,7 @@ def texture_init(_game):
     snake_body_sprite = pygame.image.load("../texture/body.png").convert()
     snake_body_sprite = pygame.transform.scale((snake_body_sprite), (_game.tile_sprite, _game.tile_sprite))
     dico_texture.append(snake_body_sprite)
-    # -- Wall -- # 
+    # -- Wall -- #
     wall_sprite = pygame.image.load("../texture/wall2.jpg").convert()
     wall_sprite = pygame.transform.scale(wall_sprite, (_game.tile_sprite, _game.tile_sprite))
     dico_texture.append(wall_sprite)
