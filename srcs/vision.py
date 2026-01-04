@@ -1,5 +1,6 @@
 import numpy as np
 
+# -- Information that provides the model a number associate at each part of the map -- #
 ENCODING = {
     "0" : 0.0,
     "1" : -1.0,
@@ -9,18 +10,7 @@ ENCODING = {
     "G" : 1.0
 }
 
-# -- 10.
-def encode_vision(snake_vison, max_dist=10):
-    state = []
-    for direction in ["UP", "DOWN", "LEFT", "RIGHT"]:
-        cells = snake_vison[direction][:max_dist]
-        for cell in cells:
-            state.append(ENCODING.get(cell, 0.0))
-        while len(cells) < max_dist:
-            state.append(-1.0)
-            cells.append("1")
-    return np.array(state, dtype=np.float32)
-
+# -- Build the snake vision to be able to use it in the model -- # 
 def build_vision(_game, grid):
     snake_vision = {
         "UP": [],
@@ -50,6 +40,19 @@ def build_vision(_game, grid):
     display_vision(grid, _game, snake_vision)
     return(snake_vision)
 
+# -- 10. Transform the vision of the snake with the [INT] associate at each case of the map from the vision -- #
+def encode_vision(snake_vison, max_dist=10):
+    state = []
+    for direction in ["UP", "DOWN", "LEFT", "RIGHT"]:
+        cells = snake_vison[direction][:max_dist]
+        for cell in cells:
+            state.append(ENCODING.get(cell, 0.0))
+        while len(cells) < max_dist:
+            state.append(-1.0)
+            cells.append("1")
+    return np.array(state, dtype=np.float32)
+
+# -- Display the vision in the terminal to make sure that the snake is seing the information he should -- #
 def display_vision(grid, _game, snake_vision):
     height = len(grid)
     width = len(grid[0])

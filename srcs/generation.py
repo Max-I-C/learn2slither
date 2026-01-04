@@ -1,6 +1,6 @@
 import random
 
-# -- 4. 
+# -- 4. This function create the map of 10x10 and add the elements of the map -- #
 def generate_map(widht, height, _game):
     #breakpoint() #Debug
     _game.snake_len = []
@@ -15,7 +15,7 @@ def generate_map(widht, height, _game):
         grid.append(row)
     return(generate_elements(grid, widht, height, _game))
 
-# -- 5.
+# -- 5. This function generate the red/green apples and the player -- #
 def generate_elements(grid, widht, height, _game):
     
     #breakpoint() #Debug
@@ -57,7 +57,6 @@ def generate_elements(grid, widht, height, _game):
                 else:
                     break
                 grid[x_snake][y_snake] = "S"
-            # Set initial direction based on the second segment so we forbid only the immediate reverse move
             if len(_game.snake_len) >= 2:
                 hx, hy = _game.snake_len[0]
                 bx, by = _game.snake_len[1]
@@ -75,7 +74,7 @@ def generate_elements(grid, widht, height, _game):
             break
     return(grid)
 
-# -- 12.1
+# -- 12.1. This function is called to generate a new apple when the previous one got eated -- #
 def new_apple(grid, height, widht, apple, x, y, _game):
     while(True):
         x_apple = random.randint(1, height - 2)

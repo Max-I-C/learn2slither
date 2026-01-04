@@ -1,5 +1,6 @@
 import pygame 
 
+# -- Function that contain all the texture for the pygame -- #
 def texture_init(_game):
     dico_texture = []
     # -- Snake head -- #

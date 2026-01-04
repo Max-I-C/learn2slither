@@ -2,83 +2,7 @@ from generation import new_apple
 from model import neuronal_network, train_step, dist_to_apple
 from vision import build_vision, encode_vision
 
-# -- 12.2
-def update_len(grid, _apple, _game):
-    if(_apple == 'R'):
-        grid[_game.snake_len[len(_game.snake_len) - 1][0]][_game.snake_len[len(_game.snake_len) - 1][1]] = '0'
-        _game.snake_len.pop()
-        print("Snake -1 of len")
-        return(grid)
-    x_last = _game.snake_len[len(_game.snake_len) - 1][0] 
-    y_last = _game.snake_len[len(_game.snake_len) - 1][1]
-    if(grid[x_last][y_last + 1] == '0'):
-        _game.snake_len.append((x_last, y_last + 1))
-    elif(grid[x_last][y_last - 1] == '0'):
-        _game.snake_len.append((x_last, y_last - 1))
-    elif(grid[x_last + 1][y_last] == '0'):
-        _game.snake_len.append((x_last + 1, y_last))
-    elif(grid[x_last - 1][y_last] == '0'):
-        _game.snake_len.append((x_last - 1, y_last))
-    else:
-        print("Error to had snake_len")
-    print("Snake +1 of len")
-    return(grid)
-
-# -- 13.
-def snake_moov(new_x, new_y, grid, _game):
-    if not _game.snake_len:
-        print("CA A PAS CRASHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-        return grid 
-    tail_x, tail_y = _game.snake_len[-1]
-    grid[tail_x][tail_y] = '0'
-    for i in range(len(_game.snake_len) - 1, 0, -1):
-        _game.snake_len[i] = _game.snake_len[i - 1]
-        grid[_game.snake_len[i][0]][_game.snake_len[i][1]] = 'S'
-    _game.snake_len[0] = (new_x, new_y)
-    return(grid)
-
-# -- 12. 
-def change_direction(x, y, grid, widht, height, _game):
-    nx = _game.snake_xpos + x
-    ny = _game.snake_ypos + y 
-    
-    if(nx > widht - 2 or nx < 1 or ny > height - 2 or ny < 1):
-        print("GAME OVER, SNAKE HIT A WALL")
-        return grid, "WALL"
-    cell = grid[nx][ny]
-    if(cell == 'P' or cell == 'S'):
-        print("GAME OVER, SNAKE CROSSING ITSELF")
-        return grid, "SELF"
-    if(cell == 'G'):
-        event = "GREEN_APPLE"
-        grid = new_apple(grid, height, widht, 'G', nx, ny, _game)
-        grid = update_len(grid, 'G', _game)
-    elif(cell == 'R'):
-        if(len(_game.snake_len) == 1):
-            print("GAME OVER, SNAKE TOO LITLE")
-            return grid, "SNAKE_LEN"
-        event = "RED_APPLE"
-        grid = new_apple(grid, height, widht, 'R', nx, ny, _game)
-        grid = update_len(grid, 'R', _game)
-    else:
-        event = "MOOVE"
-    grid[_game.snake_xpos][_game.snake_ypos] = '0'
-    grid[nx][ny] = 'P'
-    _game.snake_xpos = nx
-    _game.snake_ypos = ny
-    grid = snake_moov(nx, ny, grid, _game)
-    return(grid, event)
-
-def adding_to_dataset(event, _data):
-    if(event == "WALL"):
-        _data.death_by_wall += 1
-    elif(event == "SELF"):
-        _data.death_by_snake += 1
-    else:
-        _data.death_by_lenght += 1
-    return
-
-# -- 8.
+# -- 8. Here the moovment that the model decide to choice is redirected to the function that will moove the snake -- #
 def moov_snake(_game, grid, model, _data):
     #print(encode_vision(build_vision(_game, grid)))
     old_dist = dist_to_apple(_game)
@@ -119,7 +43,7 @@ def moov_snake(_game, grid, model, _data):
         new_dist = dist_to_apple(_game)
         delta = old_dist - new_dist
         reward = delta * 0.3
-        reward -= 0.02  # pénalité temporelle
+        reward -= 0.02
     if(done):
         next_state = state
     else:
@@ -128,7 +52,81 @@ def moov_snake(_game, grid, model, _data):
     if(done):
         return(False)
     return(grid)
-    #for lines in grid:
-    #    print("->", lines)
-    #print(grid)
-    #print(snake_vision)
+
+# -- 12. This function treat the action and execute it with the game rules -- #
+def change_direction(x, y, grid, widht, height, _game):
+    nx = _game.snake_xpos + x
+    ny = _game.snake_ypos + y 
+    
+    if(nx > widht - 2 or nx < 1 or ny > height - 2 or ny < 1):
+        print("GAME OVER, SNAKE HIT A WALL")
+        return grid, "WALL"
+    cell = grid[nx][ny]
+    if(cell == 'P' or cell == 'S'):
+        print("GAME OVER, SNAKE CROSSING ITSELF")
+        return grid, "SELF"
+    if(cell == 'G'):
+        event = "GREEN_APPLE"
+        grid = new_apple(grid, height, widht, 'G', nx, ny, _game)
+        grid = update_len(grid, 'G', _game)
+    elif(cell == 'R'):
+        if(len(_game.snake_len) == 1):
+            print("GAME OVER, SNAKE TOO LITLE")
+            return grid, "SNAKE_LEN"
+        event = "RED_APPLE"
+        grid = new_apple(grid, height, widht, 'R', nx, ny, _game)
+        grid = update_len(grid, 'R', _game)
+    else:
+        event = "MOOVE"
+    grid[_game.snake_xpos][_game.snake_ypos] = '0'
+    grid[nx][ny] = 'P'
+    _game.snake_xpos = nx
+    _game.snake_ypos = ny
+    grid = snake_moov(nx, ny, grid, _game)
+    return(grid, event)
+
+# -- 12.2. Uptade the len of the snake, so it can be removing a part of the snake body or adding one -- #
+def update_len(grid, _apple, _game):
+    if(_apple == 'R'):
+        grid[_game.snake_len[len(_game.snake_len) - 1][0]][_game.snake_len[len(_game.snake_len) - 1][1]] = '0'
+        _game.snake_len.pop()
+        print("Snake -1 of len")
+        return(grid)
+    x_last = _game.snake_len[len(_game.snake_len) - 1][0] 
+    y_last = _game.snake_len[len(_game.snake_len) - 1][1]
+    if(grid[x_last][y_last + 1] == '0'):
+        _game.snake_len.append((x_last, y_last + 1))
+    elif(grid[x_last][y_last - 1] == '0'):
+        _game.snake_len.append((x_last, y_last - 1))
+    elif(grid[x_last + 1][y_last] == '0'):
+        _game.snake_len.append((x_last + 1, y_last))
+    elif(grid[x_last - 1][y_last] == '0'):
+        _game.snake_len.append((x_last - 1, y_last))
+    else:
+        print("Error to had snake_len")
+    print("Snake +1 of len")
+    return(grid)
+
+# -- 13. This moove each part of the body of the snake -- # 
+def snake_moov(new_x, new_y, grid, _game):
+    if not _game.snake_len:
+        print("No crash but take care is not normal")
+        return grid 
+    tail_x, tail_y = _game.snake_len[-1]
+    grid[tail_x][tail_y] = '0'
+    for i in range(len(_game.snake_len) - 1, 0, -1):
+        _game.snake_len[i] = _game.snake_len[i - 1]
+        grid[_game.snake_len[i][0]][_game.snake_len[i][1]] = 'S'
+    _game.snake_len[0] = (new_x, new_y)
+    return(grid)
+
+# -- Add the resaon of death in the dataset -- #
+def adding_to_dataset(event, _data):
+    if(event == "WALL"):
+        _data.death_by_wall += 1
+    elif(event == "SELF"):
+        _data.death_by_snake += 1
+    else:
+        _data.death_by_lenght += 1
+    return
+

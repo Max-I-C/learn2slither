@@ -3,6 +3,7 @@ from model import save_model
 from generation import generate_map
 from display import display_map
 
+# -- Definition of classes -- # 
 class Model():
     def __init___(self):
         self.model = ""
@@ -36,8 +37,9 @@ class MyGame():
         self.max_length = 0
         self.max_duration = 0
         self.graph = False
+# -- Definition of classes -- # 
 
-# -- 0. -- #
+# -- 0 -- #
 def main():
     args = args_manager()
     _game = MyGame()
