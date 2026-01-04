@@ -1,5 +1,4 @@
-from main import *
-
+import pygame 
 
 def texture_init(_game):
     dico_texture = []

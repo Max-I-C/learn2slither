@@ -1,5 +1,5 @@
 from moovment import moov_snake
-from graphic import texture
+from texture import texture_init
 import pygame
 import time
 
@@ -20,7 +20,7 @@ def display_map_graphical(_game, grid, model, _data):
 
     pygame.init()
     screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-    dico_texture = texture.texture_init(_game)
+    dico_texture = texture_init(_game)
     run = True
     while run:
         grid = moov_snake(_game, grid, model, _data)
