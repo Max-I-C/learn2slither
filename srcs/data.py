@@ -28,6 +28,12 @@ def args_manager():
         action="store_true",
         help="Enable the step by step"
     )
+    parser.add_argument(
+        "-q", "--quick",
+        type=float,
+        default=0,
+        help="Define the speed of the graphical environement"
+    )
     args = parser.parse_args()
     return (args)
 
@@ -67,6 +73,9 @@ def store_args_data(args, _game, _data):
     _data.step = False
     if (args.step):
         _data.step = True
+    _data.quick = False
+    if (args.quick):
+        _data.quick = args.quick
 
 
 # -- 14. This function is updating the for the game info -- #

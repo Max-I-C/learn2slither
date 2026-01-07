@@ -1,6 +1,7 @@
 from moovment import moov_snake
 from texture import texture_init
 import pygame
+import time
 
 
 # -- 6. The function that will luch with or without #
@@ -18,6 +19,8 @@ def display_map_not_graphical(_game, grid, model, _data):
         grid = moov_snake(_game, grid, model, _data)
         if (_data.step):
             input("STEP BY STEP ACTIVATE PRESS [ENTER] TO CONTINUE : ")
+        if (_data.quick):
+            time.sleep(_data.quick)
         if not grid:
             return False
         # for lines in grid:
@@ -39,6 +42,8 @@ def display_map_graphical(_game, grid, model, _data):
         grid = moov_snake(_game, grid, model, _data)
         if (_data.step):
             wait_game(pygame.K_SPACE)
+        if (_data.quick):
+            time.sleep(_data.quick)
         if not grid:
             return False
         for i, row in enumerate(grid):
