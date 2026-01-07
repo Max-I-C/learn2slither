@@ -1,6 +1,7 @@
 import numpy as np
 
-# -- Information that provides the model a number associate at each part of the map -- #
+# -- Information that provides the model a number #
+# associate at each part of the map -- #
 ENCODING = {
     "0": 0.0,
     "1": -1.0,
@@ -42,7 +43,8 @@ def build_vision(_game, grid):
     return (snake_vision)
 
 
-# -- 10. Transform the vision of the snake with the [INT] associate at each case of the map from the vision -- #
+# -- 10. Transform the vision of the snake #
+# with the [INT] associate at each case of the map from the vision -- #
 def encode_vision(snake_vison, max_dist=10):
     state = []
     for direction in ["UP", "DOWN", "LEFT", "RIGHT"]:
@@ -55,7 +57,8 @@ def encode_vision(snake_vison, max_dist=10):
     return np.array(state, dtype=np.float32)
 
 
-# -- Display the vision in the terminal to make sure that the snake is seing the information he should -- #
+# -- Display the vision in the terminal to make #
+# sure that the snake is seing the information he should -- #
 def display_vision(grid, _game, snake_vision):
     height = len(grid)
     width = len(grid[0])

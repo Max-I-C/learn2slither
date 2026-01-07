@@ -27,7 +27,8 @@ def args_manager():
     return (args)
 
 
-# -- 2. This function open a data files that contain the number of episode that the model got trained and the epsilon value -- #
+# -- 2. This function open a data files that contain the number of #
+# episode that the model got trained and the epsilon value -- #
 def collecting_data(_game, _model):
     try:
         with open(".prog_data.json") as f:
@@ -40,7 +41,9 @@ def collecting_data(_game, _model):
         _model.episode = 0
         print("No epsilon data found")
     try:
-        _model.model = load_model(f"models/snake_model_v2_{_model.episode}.keras")
+        _model.model = load_model(
+            f"models/snake_model_v2_{_model.episode}.keras"
+        )
         print("Model loaded, continuing training....")
     except Exception:
         _model.model = create_model(input_size=40, output_size=4)

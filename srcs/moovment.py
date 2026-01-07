@@ -3,7 +3,8 @@ from model import neuronal_network, train_step, dist_to_apple
 from vision import build_vision, encode_vision
 
 
-# -- 8. Here the moovment that the model decide to choice is redirected to the function that will moove the snake -- #
+# -- 8. Here the moovment that the model decide to choice is #
+# redirected to the function that will moove the snake -- #
 def moov_snake(_game, grid, model, _data):
     # print(encode_vision(build_vision(_game, grid)))
     old_dist = dist_to_apple(_game)
@@ -12,19 +13,27 @@ def moov_snake(_game, grid, model, _data):
     if (decision == 1):
         _game.direction = 1
         print("UP")
-        grid, event = change_direction(-1, 0, grid, len(grid[0]), len(grid), _game)
+        grid, event = change_direction(
+            -1, 0, grid, len(grid[0]), len(grid), _game
+        )
     elif (decision == 2):
         _game.direction = 2
         print("DOWN")
-        grid, event = change_direction(+1, 0, grid, len(grid[0]), len(grid), _game)
+        grid, event = change_direction(
+            +1, 0, grid, len(grid[0]), len(grid), _game
+        )
     elif (decision == 3):
         _game.direction = 3
         print("LEFT")
-        grid, event = change_direction(0, -1, grid, len(grid[0]), len(grid), _game)
+        grid, event = change_direction(
+            0, -1, grid, len(grid[0]), len(grid), _game
+        )
     elif (decision == 4):
         _game.direction = 4
         print("RIGHT")
-        grid, event = change_direction(0, +1, grid, len(grid[0]), len(grid), _game)
+        grid, event = change_direction(
+            0, +1, grid, len(grid[0]), len(grid), _game
+        )
     else:
         print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
 
@@ -88,10 +97,12 @@ def change_direction(x, y, grid, widht, height, _game):
     return (grid, event)
 
 
-# -- 12.2. Uptade the len of the snake, so it can be removing a part of the snake body or adding one -- #
+# -- 12.2. Uptade the len of the snake, so it #
+# can be removing a part of the snake body or adding one -- #
 def update_len(grid, _apple, _game):
     if (_apple == 'R'):
-        grid[_game.snake_len[len(_game.snake_len) - 1][0]][_game.snake_len[len(_game.snake_len) - 1][1]] = '0'
+        x, y = _game.snake_len[-1]
+        grid[x][y] = '0'
         _game.snake_len.pop()
         print("Snake -1 of len")
         return (grid)

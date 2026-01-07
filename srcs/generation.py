@@ -1,7 +1,8 @@
 import random
 
 
-# -- 4. This function create the map of 10x10 and add the elements of the map -- #
+# -- 4. This function create the map of #
+# 10x10 and add the elements of the map -- #
 def generate_map(widht, height, _game):
     # breakpoint() #Debug
     _game.snake_len = []
@@ -44,16 +45,28 @@ def generate_elements(grid, widht, height, _game):
             _game.snake_len.append((_game.snake_xpos, _game.snake_ypos))
 
             while (len(_game.snake_len) < 3):
-                if (y_snake + 1 < widht - 1 and grid[x_snake][y_snake + 1] == '0'):
+                if (
+                    y_snake + 1 < widht - 1
+                    and grid[x_snake][y_snake + 1] == '0'
+                ):
                     _game.snake_len.append((x_snake, y_snake + 1))
                     y_snake = y_snake + 1
-                elif (y_snake - 1 > 0 and grid[x_snake][y_snake - 1] == '0'):
+                elif (
+                    y_snake - 1 > 0
+                    and grid[x_snake][y_snake - 1] == '0'
+                ):
                     _game.snake_len.append((x_snake, y_snake - 1))
                     y_snake = y_snake - 1
-                elif (x_snake + 1 < height - 1 and grid[x_snake + 1][y_snake] == '0'):
+                elif (
+                    x_snake + 1 < height - 1
+                    and grid[x_snake + 1][y_snake] == '0'
+                ):
                     _game.snake_len.append((x_snake + 1, y_snake))
                     x_snake = x_snake + 1
-                elif (x_snake - 1 > 0 and grid[x_snake - 1][y_snake] == '0'):
+                elif (
+                    x_snake - 1 > 0
+                    and grid[x_snake - 1][y_snake] == '0'
+                ):
                     _game.snake_len.append((x_snake - 1, y_snake))
                     x_snake = x_snake - 1
                 else:
@@ -62,13 +75,13 @@ def generate_elements(grid, widht, height, _game):
             if len(_game.snake_len) >= 2:
                 hx, hy = _game.snake_len[0]
                 bx, by = _game.snake_len[1]
-                if bx == hx and by == hy + 1:      # body is to the right -> heading left
+                if bx == hx and by == hy + 1:
                     _game.direction = 3
-                elif bx == hx and by == hy - 1:    # body is to the left -> heading right
+                elif bx == hx and by == hy - 1:
                     _game.direction = 4
-                elif bx == hx + 1 and by == hy:    # body is below -> heading up
+                elif bx == hx + 1 and by == hy:
                     _game.direction = 1
-                elif bx == hx - 1 and by == hy:    # body is above -> heading down
+                elif bx == hx - 1 and by == hy:
                     _game.direction = 2
             else:
                 _game.direction = 1
@@ -77,7 +90,8 @@ def generate_elements(grid, widht, height, _game):
     return (grid)
 
 
-# -- 12.1. This function is called to generate a new apple when the previous one got eated -- #
+# -- 12.1. This function is called to generate #
+# a new apple when the previous one got eated -- #
 def new_apple(grid, height, widht, apple, x, y, _game):
     while (True):
         x_apple = random.randint(1, height - 2)
@@ -85,7 +99,10 @@ def new_apple(grid, height, widht, apple, x, y, _game):
         if (grid[x_apple][y_apple] == "0"):
             grid[x_apple][y_apple] = apple
             if (apple == 'G'):
-                if (x == _game.green_apples[0][0] and y == _game.green_apples[0][1]):
+                if (
+                    x == _game.green_apples[0][0]
+                    and y == _game.green_apples[0][1]
+                ):
                     print("apple_1_new_generate")
                     _game.green_apples[0] = (x_apple, y_apple)
                 else:

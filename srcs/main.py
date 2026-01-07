@@ -1,4 +1,9 @@
-from data import collecting_data, args_manager, save_and_display, store_args_data
+from data import (
+    collecting_data,
+    args_manager,
+    save_and_display,
+    store_args_data
+)
 from model import save_model
 from generation import generate_map
 from display import display_map
@@ -22,9 +27,20 @@ class Dataset():
         self.red_apple_eated = 0
 
     def __str__(self):
+        percent_wall = (
+            self.death_by_wall / self.all_game * 100
+            if self.all_game > 0
+            else 0
+        )
         return (
-            f"total_game: {self.all_game}, death_wall: {self.death_by_wall}, death_snake: {self.death_by_snake}, death_lenght: {self.death_by_lenght}, green_apple: {self.green_apple_eated}, red_apple: {self.red_apple_eated}"
-            f"\n% of game loose by the wall: {(self.death_by_wall / self.all_game * 100) if self.all_game > 0 else 0:.2f}%"
+            f"total_game: {self.all_game}, "
+            f"death_wall: {self.death_by_wall}, "
+            f"death_snake: {self.death_by_snake}, "
+            f"death_lenght: {self.death_by_lenght}, "
+            f"green_apple: {self.green_apple_eated}, "
+            f"red_apple: {self.red_apple_eated}"
+            f"\n% of game loose by the wall: "
+            f"{percent_wall:.2f}%"
         )
 
 

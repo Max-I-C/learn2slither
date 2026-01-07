@@ -1,4 +1,3 @@
-import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 import numpy as np
@@ -27,7 +26,8 @@ def create_model(input_size, output_size):
     return model
 
 
-# -- 9. This is to calculate the distance beetwen the pos of the snake, and the closer green_apple -- #
+# -- 9. This is to calculate the distance beetwen #
+#  the pos of the snake, and the closer green_apple -- #
 def dist_to_apple(_game):
     sx, sy = _game.snake_xpos, _game.snake_ypos
     return min(
@@ -36,7 +36,8 @@ def dist_to_apple(_game):
     )
 
 
-# -- 11. This function is the one that will choice what the model consider the best action to do and verify that is a legit action -- #
+# -- 11. This function is the one that will choice what the #
+# model consider the best action to do and verify that is a legit action -- #
 def neuronal_network(state, model, _game):
     state = state.reshape(1, -1)
     valid_actions = get_valid_action(_game.direction)
@@ -64,8 +65,11 @@ def save_model(_model, _game):
         print("ERROR WHILE SAVING")
 
 
-# -- This function trained the model to tell him if what he choiced to do is good or not -- #
-def train_step(model, state, action, reward, next_state, done, _game, gamma=0.95):
+# -- This function trained the model to tell #
+# him if what he choiced to do is good or not -- #
+def train_step(
+    model, state, action, reward, next_state, done, _game, gamma=0.95
+):
     state = state.reshape(1, -1)
     next_state = next_state.reshape(1, -1)
 
@@ -81,6 +85,7 @@ def train_step(model, state, action, reward, next_state, done, _game, gamma=0.95
     model.fit(state, q_values, verbose=0)
 
 
-# -- This function verified if the action is "possible" so if the snake look up, he can't go down for logic reason -- #
+# -- This function verified if the action is "possible" #
+# so if the snake look up, he can't go down for logic reason -- #
 def get_valid_action(current_direction):
     return [a for a in [1, 2, 3, 4] if a != OPPOSITE[current_direction]]
