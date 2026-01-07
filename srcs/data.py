@@ -23,6 +23,11 @@ def args_manager():
         default=10000,
         help="Number of game to run"
     )
+    parser.add_argument(
+        "-s", "--step",
+        action="store_true",
+        help="Enable the step by step"
+    )
     args = parser.parse_args()
     return (args)
 
@@ -59,6 +64,9 @@ def store_args_data(args, _game, _data):
     _data.graph = False
     if (args.graphical):
         _data.graph = True
+    _data.step = False
+    if (args.step):
+        _data.step = True
 
 
 # -- 14. This function is updating the for the game info -- #

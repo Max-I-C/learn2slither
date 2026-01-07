@@ -56,6 +56,7 @@ class MyGame():
         self.max_length = 0
         self.max_duration = 0
         self.graph = False
+        self.step = False
 # -- Definition of classes -- #
 
 
