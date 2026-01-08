@@ -67,12 +67,12 @@ def main():
     _game = MyGame()
     _data = Dataset()
     _model = Model()
-    collecting_data(_game, _model)
-    store_args_data(args, _game, _data)
+    collecting_data(_game, _model, args)
+    store_args_data(args, _game)
     print(" -> ", _model.episode, " -> ", _game.max_game)
     while True and _data.all_game < _game.max_game:
         grid = generate_map(10, 10, _game)
-        if (display_map(grid, _game, _model.model, _data.graph, _data)):
+        if (display_map(grid, _game, _model.model, _game.graph, _data)):
             break
         if (_model.episode % 100 == 0 and _model.episode != 0):
             save_model(_model, _game)

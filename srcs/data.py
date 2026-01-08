@@ -31,8 +31,14 @@ def args_manager():
     parser.add_argument(
         "-q", "--quick",
         type=float,
-        default=0,
+        default=0.0,
         help="Define the speed of the graphical environement"
+    )
+    parser.add_argument(
+        "-t", "--training",
+        type=int,
+        default=0,
+        help="Define wich model will be load"
     )
     args = parser.parse_args()
     return (args)
@@ -40,7 +46,7 @@ def args_manager():
 
 # -- 2. This function open a data files that contain the number of #
 # episode that the model got trained and the epsilon value -- #
-def collecting_data(_game, _model):
+def collecting_data(_game, _model, args):
     try:
         with open(".prog_data.json") as f:
             data = json.load(f)
@@ -51,6 +57,8 @@ def collecting_data(_game, _model):
         _game.epsilon = 1
         _model.episode = 0
         print("No epsilon data found")
+    if (args.training):
+        _model.episode = args.training
     try:
         _model.model = load_model(
             f"models/snake_model_v2_{_model.episode}.keras"
@@ -62,20 +70,17 @@ def collecting_data(_game, _model):
 
 
 # -- 3. This function define the value associated to the flags -- #
-def store_args_data(args, _game, _data):
+def store_args_data(args, _game):
     if (args.real):
         _game.epsilon = 0
     if (args.number_of_games is not None):
         _game.max_game = args.number_of_games
-    _data.graph = False
     if (args.graphical):
-        _data.graph = True
-    _data.step = False
+        _game.graph = True
     if (args.step):
-        _data.step = True
-    _data.quick = False
+        _game.step = True
     if (args.quick):
-        _data.quick = args.quick
+        _game.quick = args.quick
 
 
 # -- 14. This function is updating the for the game info -- #

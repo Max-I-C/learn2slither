@@ -17,10 +17,10 @@ def display_map(grid, _game, model, flag, _data):
 def display_map_not_graphical(_game, grid, model, _data):
     while True:
         grid = moov_snake(_game, grid, model, _data)
-        if (_data.step):
+        if (_game.step):
             input("STEP BY STEP ACTIVATE PRESS [ENTER] TO CONTINUE : ")
-        if (_data.quick):
-            time.sleep(_data.quick)
+        if (_game.quick):
+            time.sleep(_game.quick)
         if not grid:
             return False
         # for lines in grid:
@@ -40,9 +40,9 @@ def display_map_graphical(_game, grid, model, _data):
     run = True
     while run:
         grid = moov_snake(_game, grid, model, _data)
-        if (_data.step):
+        if (_game.step):
             wait_game(pygame.K_SPACE)
-        if (_data.quick):
+        if (_game.quick):
             time.sleep(_data.quick)
         if not grid:
             return False
