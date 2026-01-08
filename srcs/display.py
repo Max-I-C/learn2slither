@@ -43,7 +43,7 @@ def display_map_graphical(_game, grid, model, _data):
         if (_game.step):
             wait_game(pygame.K_SPACE)
         if (_game.quick):
-            time.sleep(_data.quick)
+            time.sleep(_game.quick)
         if not grid:
             return False
         for i, row in enumerate(grid):

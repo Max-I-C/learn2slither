@@ -35,7 +35,7 @@ def moov_snake(_game, grid, model, _data):
             0, +1, grid, len(grid[0]), len(grid), _game
         )
     else:
-        print("HAAAAAAAAAAAAAAAAAAAA, j'suis stuck la le sang")
+        print("The snake is stuck")
 
     reward = 0.0
     done = False
@@ -58,7 +58,8 @@ def moov_snake(_game, grid, model, _data):
         next_state = state
     else:
         next_state = encode_vision(build_vision(_game, grid))
-    train_step(model, state, decision, reward, next_state, done, _game)
+    if (_game.epsilon):
+        train_step(model, state, decision, reward, next_state, done, _game)
     if (done):
         return (False)
     return (grid)

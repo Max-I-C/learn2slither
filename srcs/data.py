@@ -40,6 +40,11 @@ def args_manager():
         default=0,
         help="Define wich model will be load"
     )
+    parser.add_argument(
+        "-c", "--clear",
+        action="store_true",
+        help="Use that flag if you don't want output data"
+    )
     args = parser.parse_args()
     return (args)
 
@@ -81,6 +86,8 @@ def store_args_data(args, _game):
         _game.step = True
     if (args.quick):
         _game.quick = args.quick
+    if (args.clear):
+        _game.clear = True
 
 
 # -- 14. This function is updating the for the game info -- #
@@ -92,4 +99,5 @@ def save_and_display(_model, _data, _game):
     print("nb of episode ", _model.episode)
     print("Best score : ", _game.max_length)
     print(_data)
-    _game.epsilon = max(0.02, _game.epsilon * 0.995)
+    if (_game.epsilon):
+        _game.epsilon = max(0.02, _game.epsilon * 0.995)

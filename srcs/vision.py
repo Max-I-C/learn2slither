@@ -84,6 +84,7 @@ def display_vision(grid, _game, snake_vision):
         if (n_x < height):
             vision_map[n_x][y] = cell
 
-    print('\n')
-    for line in vision_map:
-        print("".join(line))
+    if not _game.clear:
+        print('\n')
+        for line in vision_map:
+            print("".join(line))
