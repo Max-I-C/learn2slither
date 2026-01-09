@@ -25,6 +25,7 @@ class Dataset():
         self.death_by_lenght = 0
         self.green_apple_eated = 0
         self.red_apple_eated = 0
+        self.moov_count = 0
 
     def __str__(self):
         percent_wall = (

@@ -7,6 +7,7 @@ from vision import build_vision, encode_vision
 # redirected to the function that will moove the snake -- #
 def moov_snake(_game, grid, model, _data):
     # print(encode_vision(build_vision(_game, grid)))
+    _data.moov_count += 1
     old_dist = dist_to_apple(_game)
     state = encode_vision(build_vision(_game, grid))
     decision = neuronal_network(state, model, _game)
@@ -52,7 +53,8 @@ def moov_snake(_game, grid, model, _data):
     else:
         new_dist = dist_to_apple(_game)
         delta = old_dist - new_dist
-        reward = delta * 0.3
+        if abs(delta) < 0.05:
+            reward -= 0.3
         reward -= 0.02
     if (done):
         next_state = state

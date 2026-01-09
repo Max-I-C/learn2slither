@@ -15,6 +15,7 @@ def display_map(grid, _game, model, flag, _data):
 # -- 7. This function the program without pygame, #
 # this is mostly use to train faster the model -- #
 def display_map_not_graphical(_game, grid, model, _data):
+    _data.moov_count = 0
     while True:
         grid = moov_snake(_game, grid, model, _data)
         if (_game.step):
@@ -22,6 +23,9 @@ def display_map_not_graphical(_game, grid, model, _data):
         if (_game.quick):
             time.sleep(_game.quick)
         if not grid:
+            return False
+        if (_data.moov_count == 500):
+            print("The snake is stuck in a loop probably")
             return False
         # for lines in grid:
         #    print(lines)
@@ -31,6 +35,7 @@ def display_map_not_graphical(_game, grid, model, _data):
 # -- 7. This one is to run with pygame, #
 #  this is better to be able to see how is playing the snake -- #
 def display_map_graphical(_game, grid, model, _data):
+    _data.moov_count = 0
     width = len(grid[0]) * _game.tile_sprite
     height = len(grid) * _game.tile_sprite
 
@@ -45,6 +50,9 @@ def display_map_graphical(_game, grid, model, _data):
         if (_game.quick):
             time.sleep(_game.quick)
         if not grid:
+            return False
+        if (_data.moov_count == 500):
+            print("The snake probaply got stuck")
             return False
         for i, row in enumerate(grid):
             for j, char in enumerate(row):
